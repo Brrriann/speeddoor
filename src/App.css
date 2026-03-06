@@ -192,6 +192,105 @@
 
 .btn-add-project:hover { background: #2563eb; transform: translateY(-2px); }
 
+/* 계산서 현황 스타일 */
+.invoice-container {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.invoice-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  background: #f8fafc;
+  padding: 15px 20px;
+  border-radius: 12px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-group button {
+  padding: 6px 14px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-group button.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.invoice-summary {
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.invoice-summary .highlight {
+  color: #ef4444;
+  font-size: 1.1rem;
+  margin-left: 5px;
+}
+
+.invoice-list-table {
+  overflow-x: auto;
+}
+
+.invoice-list-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoice-list-table th {
+  text-align: left;
+  padding: 12px 15px;
+  background: #f1f5f9;
+  font-size: 13px;
+  color: #475569;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.invoice-list-table td {
+  padding: 15px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.invoice-list-table tr:hover {
+  background: #fcfcfd;
+}
+
+.invoice-list-table td.bold { font-weight: 700; }
+.invoice-list-table td.right { text-align: right; font-family: monospace; font-weight: 600; }
+
+.invoice-badge {
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 4px;
+  border: none;
+}
+
+.invoice-badge.대기 { background: #f1f5f9; color: #64748b; }
+.invoice-badge.요청 { background: #dbeafe; color: #1e40af; }
+.invoice-badge.완료 { background: #dcfce7; color: #166534; }
+
 .project-grid {
   display: flex;
   flex-direction: column;
