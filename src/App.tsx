@@ -628,10 +628,10 @@ function App() {
                         <div className="day-events">
                           {dayProjects.map(p => (
                             <div key={p.id} className="calendar-event-group">
-                              {p.measure_date === dateStr && <div className="event measure">실: {p.site_name}</div>}
-                              {p.install_date === dateStr && <div className="event install">설: {p.site_name}</div>}
-                              {p.invoice_date === dateStr && <div className="event invoice">계: {p.site_name}</div>}
-                              {p.payment_date === dateStr && <div className="event payment">수: {p.site_name}</div>}
+                              {p.measure_date === dateStr && <div className="event measure">실측: {p.site_name}</div>}
+                              {p.install_date === dateStr && <div className="event install">설치: {p.site_name}</div>}
+                              {p.invoice_date === dateStr && <div className="event invoice">계산서: {p.site_name}</div>}
+                              {p.payment_date === dateStr && <div className="event payment">수금: {p.site_name}</div>}
                             </div>
                           ))}
                         </div>
