@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import './App.css';
 import React from 'react';
+import * as XLSX from 'xlsx';
 
 // --- 인터페이스 정의 ---
 interface Item {
@@ -32,6 +33,12 @@ interface Project {
   payment_date: string;
   payment_status: '미수금' | '일부수금' | '완료';
   notes: string;
+  biz_name: string;
+  biz_owner: string;
+  biz_address: string;
+  biz_type: string;
+  biz_item: string;
+  biz_email: string;
 }
 
 interface SavedQuotation {
@@ -176,11 +183,46 @@ function App() {
       measure_status: '대기',
       install_status: '대기',
       invoice_status: '대기',
-      payment_status: '미수금'
+      payment_status: '미수금',
+      biz_name: '',
+      biz_owner: '',
+      biz_address: '',
+      biz_type: '',
+      biz_item: '',
+      biz_email: ''
     }]);
     
     if (error) alert('생성 실패: ' + error.message);
     else fetchProjects();
+  };
+
+  const exportProjectToExcel = (project: Project) => {
+    const data = [
+      ["프로젝트 정보"],
+      ["현장명", project.site_name],
+      ["고객사", project.customer_name],
+      ["계약금액", project.total_amount],
+      [""],
+      ["계산서 정보"],
+      ["상호", project.biz_name],
+      ["성명", project.biz_owner],
+      ["사업장주소", project.biz_address],
+      ["업태", project.biz_type],
+      ["종목", project.biz_item],
+      ["이메일", project.biz_email],
+      [""],
+      ["공정 상태"],
+      ["실측", `${project.measure_status} (${project.measure_date || '-'})`],
+      ["설치", `${project.install_status} (${project.install_date || '-'})`],
+      ["계산서", `${project.invoice_status} (${project.invoice_date || '-'})`],
+      ["수금", `${project.payment_status} (${project.payment_date || '-'})`]
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "계산서 정보");
+    
+    XLSX.writeFile(workbook, `계산서_${project.site_name}_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
   const updateProject = async (id: string, field: string, value: any) => {
@@ -539,9 +581,25 @@ function App() {
                           rows={1}
                         />
                       </div>
-                    </div>
-                  </div>
-                ))}
+
+                      <div className="biz-info-section">
+                        <div className="section-title">계산서 발행 정보</div>
+                        <div className="biz-info-grid">
+                          <input placeholder="상호" value={project.biz_name || ''} onChange={e => updateProject(project.id, 'biz_name', e.target.value)} />
+                          <input placeholder="성명" value={project.biz_owner || ''} onChange={e => updateProject(project.id, 'biz_owner', e.target.value)} />
+                          <input placeholder="이메일" value={project.biz_email || ''} onChange={e => updateProject(project.id, 'biz_email', e.target.value)} />
+                          <input placeholder="업태" value={project.biz_type || ''} onChange={e => updateProject(project.id, 'biz_type', e.target.value)} />
+                          <input placeholder="종목" value={project.biz_item || ''} onChange={e => updateProject(project.id, 'biz_item', e.target.value)} />
+                          <input placeholder="사업장주소" className="full-width" value={project.biz_address || ''} onChange={e => updateProject(project.id, 'biz_address', e.target.value)} />
+                        </div>
+                        <button className="btn-excel-export" onClick={() => exportProjectToExcel(project)}>
+                          <span className="icon">📊</span> 엑셀 다운로드 (계산서 정보)
+                        </button>
+                      </div>
+                      </div>
+                      </div>
+                      ))}
+
               </div>
             ) : dashboardMode === 'calendar' ? (
               <div className="calendar-card">

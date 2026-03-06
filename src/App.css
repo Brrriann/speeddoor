@@ -297,6 +297,63 @@
   gap: 20px;
 }
 
+/* 프로젝트 카드 내 계산서 정보 섹션 */
+.biz-info-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.biz-info-section .section-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1e40af;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.biz-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.biz-info-grid input {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.biz-info-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+.btn-excel-export {
+  width: 100%;
+  padding: 10px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-excel-export:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
 .project-card {
   background: white;
   border-radius: 16px;
