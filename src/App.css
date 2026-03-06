@@ -35,20 +35,170 @@
   width: 100%;
 }
 
-@media (min-width: 1200px) {
-  .main-layout {
-    flex-direction: row;
-  }
-  .quotation-card { 
-    flex: 1; 
-    min-width: 850px; 
-  }
-  .saved-list-panel { 
-    width: 340px; 
-    flex-shrink: 0;
-    position: sticky; 
-    top: 20px; 
-  }
+/* 대시보드 레이아웃 */
+.dashboard-container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.dashboard-header h1 { margin: 0; text-align: left; }
+
+.btn-add-project {
+  padding: 10px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-project:hover { background: #2563eb; transform: translateY(-2px); }
+
+.project-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.project-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  border-left: 6px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.project-card:hover { border-left-color: #3b82f6; box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+
+.project-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.project-title h3 { margin: 0; padding: 0; border: none; font-size: 1.3rem; color: #1e293b; }
+.project-title h3::before { display: none; }
+
+.customer-input {
+  border: none;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  margin-top: 5px;
+  width: auto;
+  min-width: 200px;
+}
+
+.btn-delete-project {
+  background: #fee2e2;
+  color: #ef4444;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.status-timeline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.status-node {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.node-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-select {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+
+.status-select.대기 { background: #f1f5f9; color: #64748b; }
+.status-select.진행중 { background: #fef9c3; color: #854d0e; }
+.status-select.완료 { background: #dcfce7; color: #166534; }
+.status-select.요청 { background: #dbeafe; color: #1e40af; }
+.status-select.일부수금 { background: #ffedd5; color: #9a3412; }
+.status-select.미수금 { background: #fee2e2; color: #991b1b; }
+
+.status-node input[type="date"] {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  border: 1px solid #e2e8f0;
+}
+
+.project-info-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.amount-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: #334155;
+  white-space: nowrap;
+}
+
+.amount-field input {
+  width: 140px;
+  font-weight: 800;
+  color: #1e3a8a;
+  text-align: right;
+  padding: 6px 10px;
+}
+
+.project-notes {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  min-height: 40px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 100px 20px;
+  background: white;
+  border-radius: 16px;
+  color: #94a3b8;
+  border: 2px dashed #e2e8f0;
 }
 
 /* 도어 추가설명 섹션 */
