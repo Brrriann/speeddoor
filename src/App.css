@@ -4,201 +4,469 @@
 }
 
 .container {
-  padding: 20px;
-  background-color: #f5f7fa;
+  padding: 20px 10px;
+  background-color: #f8fafc;
   min-height: 100vh;
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
 }
 
-/* 작성 카드 스타일 (화면 전용) */
+/* 폼 섹션 공통 */
 .quotation-card {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
   background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 30px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-h1 { color: #2d3748; margin-bottom: 30px; text-align: center; }
-h3 { color: #4a5568; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; margin-top: 30px; }
+@media (min-width: 768px) {
+  .container { padding: 40px 20px; }
+  .quotation-card { padding: 50px; }
+}
+
+h1 { 
+  color: #1e293b; 
+  margin-bottom: 30px; 
+  text-align: center; 
+  font-weight: 800; 
+  font-size: 1.8rem; 
+  letter-spacing: -0.025em; 
+}
+
+@media (min-width: 768px) {
+  h1 { font-size: 2.5rem; margin-bottom: 40px; }
+}
+
+h3 { 
+  color: #334155; 
+  padding-bottom: 12px; 
+  margin-top: 30px; 
+  font-weight: 700; 
+  display: flex; 
+  align-items: center; 
+  font-size: 1.1rem;
+}
+h3::before { content: ''; display: inline-block; width: 4px; height: 18px; background: #3b82f6; margin-right: 10px; border-radius: 2px; }
 
 .form-section .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 1fr;
   gap: 15px;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
-input {
-  padding: 10px 14px;
+@media (min-width: 640px) {
+  .form-section .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .form-section .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px 16px;
   border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: border-color 0.2s;
+  border-radius: 10px;
+  font-size: 16px; /* 모바일 자동 줌 방지 및 가독성 향상 */
+  color: #1e293b; /* 글자 색상 명시 */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #fcfcfd;
+  box-sizing: border-box;
+  -webkit-appearance: none; /* iOS 기본 스타일 방지 */
 }
 
-input:focus {
+input:focus, textarea:focus {
   outline: none;
-  border-color: #3182ce;
-  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
-/* 아이템 테이블 스타일 */
+.remarks-input {
+  width: 100%;
+  resize: vertical;
+  margin-top: 15px;
+  line-height: 1.6;
+}
+
+/* 아이템 테이블 모바일 대응 */
+.items-section {
+  overflow-x: auto;
+  margin-top: 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
 .items-section table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
+  min-width: 800px; /* 테이블 최소 너비 보장하여 찌그러짐 방지 */
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
 }
 
 .items-section th {
-  background: #f8fafc;
-  padding: 12px;
+  background: #f1f5f9;
+  padding: 14px;
   text-align: left;
   font-size: 13px;
-  color: #64748b;
-  border-bottom: 2px solid #edf2f7;
+  color: #475569;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .items-section td {
-  padding: 10px 5px;
-  border-bottom: 1px solid #edf2f7;
+  padding: 12px 8px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.items-section input { width: 90%; border: none; background: #fdfdfd; }
-.items-section input:hover { background: #f1f5f9; }
+.items-section input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+.items-section .wide-input {
+  background: #fdfdfd;
+  border: 1px solid #f1f5f9;
+  border-radius: 4px;
+}
+
+.items-section input:focus {
+  background: white;
+  box-shadow: none;
+  border-radius: 6px;
+}
 
 .btn-delete {
-  background: #fff5f5;
-  color: #c53030;
+  background: #fee2e2;
+  color: #ef4444;
   border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin: 0 auto;
 }
+
+.btn-delete:hover { background: #fecaca; transform: scale(1.05); }
 
 .btn-add {
-  margin-top: 15px;
-  background: #ebf8ff;
-  color: #2b6cb0;
-  border: 1px dashed #bee3f8;
-  padding: 10px 20px;
+  margin-top: 20px;
+  background: #f0f7ff;
+  color: #2563eb;
+  border: 2px dashed #bfdbfe;
+  padding: 14px;
   width: 100%;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
+  transition: all 0.2s;
 }
 
-/* 합계 섹션 */
+.btn-add:hover { background: #e0efff; border-color: #3b82f6; }
+
+/* 요약 섹션 */
 .summary-section {
-  margin-top: 30px;
-  border-top: 2px solid #edf2f7;
-  padding-top: 20px;
+  margin-top: 50px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 16px;
   text-align: right;
 }
 
-.summary-section .row {
-  margin-bottom: 8px;
-  font-size: 16px;
-  color: #4a5568;
+@media (min-width: 768px) {
+  .summary-section { padding: 30px; }
 }
 
-.summary-section .total {
-  font-size: 24px;
-  font-weight: 800;
-  color: #2d3748;
-  margin-top: 15px;
+.summary-section .row { margin-bottom: 12px; font-size: 14px; color: #64748b; }
+@media (min-width: 768px) { .summary-section .row { font-size: 16px; } }
+
+.summary-section .total { 
+  font-size: 20px; 
+  font-weight: 900; 
+  color: #0f172a; 
+  margin-top: 20px; 
+  border-top: 1px solid #e2e8f0; 
+  padding-top: 20px; 
 }
+@media (min-width: 768px) { .summary-section .total { font-size: 28px; } }
 
 .btn-print {
   display: block;
   width: 100%;
   margin-top: 40px;
   padding: 16px;
-  background: #3182ce;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 700;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+  transition: transform 0.1s, box-shadow 0.1s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* 모바일 더블탭 줌 방지 및 즉각 탭 반응 */
+  position: relative;
+  z-index: 10; /* 레이어 순서 보장 */
 }
 
-/* 인쇄 전용 스타일 (서식) */
+@media (min-width: 768px) {
+  .btn-print { padding: 20px; font-size: 1.1rem; }
+  .btn-print:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(37, 99, 235, 0.35); }
+}
+
+.btn-print:active {
+  transform: translateY(1px);
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+  filter: brightness(0.9);
+}
+
+.print-tip {
+  margin-top: 12px;
+  text-align: center;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 0 10px;
+  word-break: keep-all;
+}
+
+.print-tip strong {
+  color: #3b82f6;
+}
+
+/* 견적서 인쇄 디자인 (FANCY & MODERN) */
 .print-only { display: none; }
 
 @media print {
+  @page { 
+    margin: 15mm 12mm; 
+  }
   .no-print { display: none !important; }
   .print-only { display: block !important; }
-  
-  body { background: white; margin: 0; padding: 0; }
+
+  body { margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; }
   .container { padding: 0; background: white; }
-  
+
   .quotation-sheet {
-    width: 210mm; /* A4 width */
-    height: 297mm;
-    padding: 20mm;
-    margin: 0 auto;
-    color: black;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    color: #1e293b;
+    position: relative;
+    box-sizing: border-box;
+    font-size: 11pt;
+    line-height: 1.5;
   }
-  
-  header h1 {
-    font-size: 40px;
-    letter-spacing: 15px;
-    margin-bottom: 10px;
-    text-decoration: underline;
-    text-underline-offset: 10px;
-  }
-  
-  .quote-meta { text-align: right; margin-bottom: 20px; }
-  
-  .parties {
-    display: flex;
-    justify-content: space-between;
+
+  .sheet-border-top {
+    height: 6px;
+    background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
     margin-bottom: 30px;
   }
-  
-  .customer-info { width: 45%; }
-  .to-whom { font-size: 20px; font-weight: bold; border-bottom: 2px solid black; padding-bottom: 5px; }
-  .total-display { margin-top: 20px; font-size: 18px; font-weight: bold; padding: 10px; border: 2px solid black; }
-  
-  .provider-info table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-  
-  .provider-info th, .provider-info td {
-    border: 1px solid black;
-    padding: 5px;
-    text-align: center;
-  }
-  
-  .provider-info th { background: #f0f0f0; width: 80px; }
 
-  .items-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
+  .sheet-header { margin-bottom: 30px; }
   
-  .items-table th, .items-table td {
-    border: 1px solid black;
-    padding: 8px;
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 20px;
+    margin-bottom: 25px;
+  }
+
+  .brand-name { font-size: 24pt; font-weight: 900; color: #1e3a8a; margin: 0; }
+  .brand-tagline { font-size: 9pt; color: #64748b; margin: 4px 0 0 0; font-weight: 500; }
+
+  .doc-title-wrapper { text-align: right; }
+  .doc-title { font-size: 32pt; font-weight: 900; margin: 0; letter-spacing: 0.1em; color: #0f172a; }
+  .doc-number { font-size: 10pt; color: #94a3b8; font-family: monospace; }
+
+  .header-bottom { display: flex; justify-content: space-between; gap: 30px; }
+  
+  .client-box { flex: 1; }
+  .provider-box { width: 320px; }
+
+  .label { font-size: 8pt; font-weight: 800; color: #3b82f6; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .client-name { font-size: 18pt; font-weight: 800; border-bottom: 3px solid #0f172a; padding-bottom: 5px; margin-bottom: 10px; }
+  .honorific { font-size: 12pt; font-weight: 400; color: #475569; }
+  .client-contact { font-size: 11pt; color: #475569; margin-bottom: 12px; }
+  .quote-intro { font-size: 9.5pt; color: #64748b; line-height: 1.6; }
+
+  .provider-details { background: #f8fafc; padding: 15px; border-radius: 8px; font-size: 9.5pt; }
+  .provider-details .row { display: flex; margin-bottom: 4px; }
+  .p-label { width: 70px; font-weight: 700; color: #475569; flex-shrink: 0; }
+  .seal { color: #ef4444; font-weight: 900; margin-left: 5px; }
+
+  .total-bar {
+    background: #0f172a;
+    color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .total-label { font-size: 12pt; font-weight: 700; }
+  .total-label .small { font-size: 9pt; opacity: 0.7; font-weight: 400; }
+  .total-value { font-size: 24pt; font-weight: 900; }
+  .currency { font-size: 12pt; margin-right: 10px; font-weight: 400; opacity: 0.8; }
+  .issue-date { font-size: 10pt; opacity: 0.8; }
+
+  .sheet-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+  .sheet-table th {
+    background: #f1f5f9;
+    border-top: 2px solid #0f172a;
+    border-bottom: 1px solid #cbd5e1;
+    padding: 12px 8px;
+    font-size: 10pt;
+    font-weight: 800;
+  }
+  .sheet-table td { padding: 12px 8px; border-bottom: 1px solid #e2e8f0; font-size: 10.5pt; }
+  
+  .center { text-align: center; }
+  .right { text-align: right; }
+  .desc-text { font-weight: 600; }
+  .dim { color: #64748b; font-weight: 400; font-size: 9pt; }
+
+  .w-no { width: 40px; }
+  .w-qty { width: 50px; }
+  .w-unit-name { width: 50px; }
+  .w-unit { width: 100px; }
+  .w-amount { width: 120px; }
+  .w-remarks { width: 100px; }
+
+  .empty-row td { height: 35px; color: transparent; }
+
+  .sheet-footer { display: flex; gap: 30px; margin-top: 10px; }
+  .footer-left { flex: 1; }
+  .footer-right { width: 300px; }
+
+  .remarks-box { border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 15px; min-height: 120px; }
+  .remarks-content { font-size: 9.5pt; color: #475569; }
+  .remarks-content p { margin: 2px 0; }
+
+  .calc-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 10pt; border-bottom: 1px solid #f1f5f9; }
+  .calc-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    margin-top: 5px;
+    border-top: 2px solid #0f172a;
+    font-weight: 900;
+    font-size: 12pt;
+    color: #1e3a8a;
+  }
+
+  .sheet-final {
+    margin-top: 40px;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 30px;
+  }
+  .sheet-final p { font-size: 10pt; color: #64748b; margin-bottom: 25px; }
+
+  /* 강점 소개 페이지 스타일 */
+  .sheet-strengths-page {
+    page-break-before: always;
+    padding-top: 30px;
+  }
+
+  .strengths-header {
+    margin-bottom: 40px;
     text-align: center;
   }
-  
-  .items-table th { background: #f0f0f0; }
-  .empty-row td { height: 30px; }
-  
-  .grand-total td { font-weight: bold; font-size: 16px; background: #f0f0f0; }
-  
-  .remarks {
-    margin-top: 30px;
-    border: 1px solid black;
-    padding: 10px;
-    min-height: 100px;
+
+  .strengths-header h3 {
+    font-size: 22pt;
+    font-weight: 900;
+    color: #1e3a8a;
+    margin-bottom: 15px;
+  }
+
+  .strengths-header .header-line {
+    width: 60px;
+    height: 4px;
+    background: #3b82f6;
+    margin: 0 auto;
+  }
+
+  .strengths-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .strengths-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #3b82f6;
+    word-break: keep-all; /* 단어 잘림 방지 */
+  }
+
+  .strengths-list .bullet {
+    font-size: 14pt;
+    font-weight: 900;
+    color: #3b82f6;
+    margin-right: 20px;
+    font-family: monospace;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .strengths-list p {
+    margin: 0;
+    font-size: 11pt;
+    color: #334155;
+    line-height: 1.6;
+    font-weight: 500;
+    text-align: justify;
+  }
+
+  .strengths-footer {
+    margin-top: 60px;
+    text-align: right;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+  }
+
+  .strengths-footer p {
+    font-size: 14pt;
+    font-weight: 800;
+    color: #1e3a8a;
+  }
+
+  .signature-area { display: flex; flex-direction: column; align-items: center; }
+  .sign-box {
+    margin-top: 15px;
+    font-size: 14pt;
+    font-weight: 700;
+    letter-spacing: 2px;
   }
 }
