@@ -1,0 +1,204 @@
+#root {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.container {
+  padding: 20px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
+
+/* 작성 카드 스타일 (화면 전용) */
+.quotation-card {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+h1 { color: #2d3748; margin-bottom: 30px; text-align: center; }
+h3 { color: #4a5568; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; margin-top: 30px; }
+
+.form-section .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+input {
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+}
+
+/* 아이템 테이블 스타일 */
+.items-section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.items-section th {
+  background: #f8fafc;
+  padding: 12px;
+  text-align: left;
+  font-size: 13px;
+  color: #64748b;
+  border-bottom: 2px solid #edf2f7;
+}
+
+.items-section td {
+  padding: 10px 5px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.items-section input { width: 90%; border: none; background: #fdfdfd; }
+.items-section input:hover { background: #f1f5f9; }
+
+.btn-delete {
+  background: #fff5f5;
+  color: #c53030;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.btn-add {
+  margin-top: 15px;
+  background: #ebf8ff;
+  color: #2b6cb0;
+  border: 1px dashed #bee3f8;
+  padding: 10px 20px;
+  width: 100%;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* 합계 섹션 */
+.summary-section {
+  margin-top: 30px;
+  border-top: 2px solid #edf2f7;
+  padding-top: 20px;
+  text-align: right;
+}
+
+.summary-section .row {
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #4a5568;
+}
+
+.summary-section .total {
+  font-size: 24px;
+  font-weight: 800;
+  color: #2d3748;
+  margin-top: 15px;
+}
+
+.btn-print {
+  display: block;
+  width: 100%;
+  margin-top: 40px;
+  padding: 16px;
+  background: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+}
+
+/* 인쇄 전용 스타일 (서식) */
+.print-only { display: none; }
+
+@media print {
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  
+  body { background: white; margin: 0; padding: 0; }
+  .container { padding: 0; background: white; }
+  
+  .quotation-sheet {
+    width: 210mm; /* A4 width */
+    height: 297mm;
+    padding: 20mm;
+    margin: 0 auto;
+    color: black;
+  }
+  
+  header h1 {
+    font-size: 40px;
+    letter-spacing: 15px;
+    margin-bottom: 10px;
+    text-decoration: underline;
+    text-underline-offset: 10px;
+  }
+  
+  .quote-meta { text-align: right; margin-bottom: 20px; }
+  
+  .parties {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+  }
+  
+  .customer-info { width: 45%; }
+  .to-whom { font-size: 20px; font-weight: bold; border-bottom: 2px solid black; padding-bottom: 5px; }
+  .total-display { margin-top: 20px; font-size: 18px; font-weight: bold; padding: 10px; border: 2px solid black; }
+  
+  .provider-info table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  
+  .provider-info th, .provider-info td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+  }
+  
+  .provider-info th { background: #f0f0f0; width: 80px; }
+
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .items-table th, .items-table td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .items-table th { background: #f0f0f0; }
+  .empty-row td { height: 30px; }
+  
+  .grand-total td { font-weight: bold; font-size: 16px; background: #f0f0f0; }
+  
+  .remarks {
+    margin-top: 30px;
+    border: 1px solid black;
+    padding: 10px;
+    min-height: 100px;
+  }
+}
