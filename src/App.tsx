@@ -25,11 +25,11 @@ interface Project {
   customer_name: string;
   total_amount: number;
   measure_date: string;
-  measure_status: '대기' | '진행중' | '완료';
+  measure_status: '예정' | '완료';
   install_date: string;
-  install_status: '대기' | '진행중' | '완료';
+  install_status: '대기' | '확정' | '완료';
   invoice_date: string;
-  invoice_status: '대기' | '요청' | '발행완료';
+  invoice_status: '미발급' | '완료';
   payment_date: string;
   payment_status: '미수금' | '일부수금' | '완료';
   notes: string;
@@ -114,7 +114,7 @@ function App() {
   // --- 메인 앱 상태 ---
   const [view, setView] = useState<'quotation' | 'measurement' | 'dashboard'>('dashboard');
   const [dashboardMode, setDashboardMode] = useState<'list' | 'calendar' | 'invoice'>('list');
-  const [invoiceFilter, setInvoiceFilter] = useState<'전체' | '대기' | '요청' | '발행완료'>('전체');
+  const [invoiceFilter, setInvoiceFilter] = useState<'전체' | '미발급' | '완료'>('전체');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [items, setItems] = useState<Item[]>([
     { id: '1', type: 'door', name: '기본형 스피드 도어', unit: 'SET', width: 3000, height: 3000, quantity: 1, unitPrice: 2500000, remarks: '' }
@@ -180,9 +180,9 @@ function App() {
       site_name: siteName,
       customer_name: '',
       total_amount: 0,
-      measure_status: '대기',
+      measure_status: '예정',
       install_status: '대기',
-      invoice_status: '대기',
+      invoice_status: '미발급',
       payment_status: '미수금',
       biz_name: '',
       biz_owner: '',
@@ -518,8 +518,7 @@ function App() {
                             onChange={e => handleProjectUpdateImmediate(project.id, 'measure_status', e.target.value)}
                             className={`status-select ${project.measure_status}`}
                           >
-                            <option value="대기">대기</option>
-                            <option value="진행중">진행중</option>
+                            <option value="예정">예정</option>
                             <option value="완료">완료</option>
                           </select>
                           <input type="date" value={project.measure_date || ''} onChange={e => handleProjectUpdateImmediate(project.id, 'measure_date', e.target.value)} />
@@ -534,23 +533,22 @@ function App() {
                             className={`status-select ${project.install_status}`}
                           >
                             <option value="대기">대기</option>
-                            <option value="진행중">진행중</option>
+                            <option value="확정">확정</option>
                             <option value="완료">완료</option>
                           </select>
                           <input type="date" value={project.install_date || ''} onChange={e => handleProjectUpdateImmediate(project.id, 'install_date', e.target.value)} />
                         </div>
 
                         {/* 3. 계산서 섹션 */}
-                        <div className={`status-node ${project.invoice_status === '발행완료' ? 'done' : ''}`}>
+                        <div className={`status-node ${project.invoice_status === '완료' ? 'done' : ''}`}>
                           <div className="node-label">계산서</div>
                           <select 
                             value={project.invoice_status} 
                             onChange={e => handleProjectUpdateImmediate(project.id, 'invoice_status', e.target.value)}
-                            className={`status-select ${project.invoice_status === '발행완료' ? '완료' : project.invoice_status}`}
+                            className={`status-select ${project.invoice_status}`}
                           >
-                            <option value="대기">대기</option>
-                            <option value="요청">요청</option>
-                            <option value="발행완료">발급완료</option>
+                            <option value="미발급">미발급</option>
+                            <option value="완료">완료</option>
                           </select>
                           <input type="date" value={project.invoice_date || ''} onChange={e => handleProjectUpdateImmediate(project.id, 'invoice_date', e.target.value)} />
                         </div>
@@ -645,12 +643,11 @@ function App() {
                 <div className="invoice-filter-bar">
                   <div className="filter-group">
                     <button className={invoiceFilter === '전체' ? 'active' : ''} onClick={() => setInvoiceFilter('전체')}>전체 ({projects.length})</button>
-                    <button className={invoiceFilter === '대기' ? 'active' : ''} onClick={() => setInvoiceFilter('대기')}>미발급 ({projects.filter(p => p.invoice_status === '대기').length})</button>
-                    <button className={invoiceFilter === '요청' ? 'active' : ''} onClick={() => setInvoiceFilter('요청')}>요청 ({projects.filter(p => p.invoice_status === '요청').length})</button>
-                    <button className={invoiceFilter === '발행완료' ? 'active' : ''} onClick={() => setInvoiceFilter('발행완료')}>발급완료 ({projects.filter(p => p.invoice_status === '발행완료').length})</button>
+                    <button className={invoiceFilter === '미발급' ? 'active' : ''} onClick={() => setInvoiceFilter('미발급')}>미발급 ({projects.filter(p => p.invoice_status === '미발급').length})</button>
+                    <button className={invoiceFilter === '완료' ? 'active' : ''} onClick={() => setInvoiceFilter('완료')}>발급완료 ({projects.filter(p => p.invoice_status === '완료').length})</button>
                   </div>
                   <div className="invoice-summary">
-                    미발급 합계: <span className="highlight">₩{projects.filter(p => p.invoice_status !== '발행완료').reduce((sum, p) => sum + (p.total_amount || 0), 0).toLocaleString()}</span>
+                    미발급 합계: <span className="highlight">₩{projects.filter(p => p.invoice_status !== '완료').reduce((sum, p) => sum + (p.total_amount || 0), 0).toLocaleString()}</span>
                   </div>
                   <button 
                     className="btn-excel-export-list" 
@@ -684,11 +681,10 @@ function App() {
                               <select 
                                 value={p.invoice_status} 
                                 onChange={e => handleProjectUpdateImmediate(p.id, 'invoice_status', e.target.value)}
-                                className={`invoice-badge ${p.invoice_status === '발행완료' ? '완료' : p.invoice_status}`}
+                                className={`invoice-badge ${p.invoice_status === '완료' ? '완료' : p.invoice_status}`}
                               >
-                                <option value="대기">미발급</option>
-                                <option value="요청">요청중</option>
-                                <option value="발행완료">발급완료</option>
+                                <option value="미발급">미발급</option>
+                                <option value="완료">발급완료</option>
                               </select>
                             </td>
                             <td>
