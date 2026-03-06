@@ -430,7 +430,7 @@ function App() {
                   </div>
 
                   <div className="extra-items-section">
-                    <label className="section-label">도어 추가항목</label>
+                    <label className="section-label">도어 추가설명</label>
                     {door.extraItems?.map((item) => (
                       <div key={item.id} className="extra-item-row">
                         <div className="extra-item-inputs">
@@ -440,7 +440,7 @@ function App() {
                         <button className="btn-remove-extra" onClick={() => removeExtraItem(door.id, item.id)}>×</button>
                       </div>
                     ))}
-                    <button className="btn-add-extra" onClick={() => addExtraItem(door.id)}>+ 항목 추가</button>
+                    <button className="btn-add-extra" onClick={() => addExtraItem(door.id)}>+ 설명 추가</button>
                   </div>
 
                   <div className="door-photo-section">
@@ -607,7 +607,7 @@ function App() {
                   <tr>
                     <th>폭(W) x 높이(H)</th>
                     <td>{door.width} x {door.height} mm</td>
-                    <th colSpan={1}>도어 추가항목</th>
+                    <th colSpan={1}>도어 추가설명</th>
                     <td colSpan={1}>
                       {door.extraItems?.map((item) => (
                         <div key={item.id} style={{ fontSize: '9pt', marginBottom: '2px' }}>
