@@ -386,6 +386,16 @@ function App() {
   const updateItem = (id: string, field: keyof Item, value: string | number) => setItems(items.map(item => item.id === id ? { ...item, [field]: value } : item));
   const handlePrint = () => { if (document.activeElement instanceof HTMLElement) document.activeElement.blur(); requestAnimationFrame(() => window.print()); };
 
+  // --- 유틸리티 함수 (금액 포맷팅) ---
+  const formatNumber = (num: number | string) => {
+    if (!num) return "0";
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const parseNumber = (str: string) => {
+    return parseInt(str.replace(/,/g, "")) || 0;
+  };
+
   if (isLoading) return <div className="loading">로딩 중...</div>;
 
   if (!currentUser) {
@@ -515,7 +525,11 @@ function App() {
                       <div className="project-info-row">
                         <div className="amount-field">
                           <span>계약금액:</span>
-                          <input type="number" value={project.total_amount} onChange={e => updateProject(project.id, 'total_amount', parseInt(e.target.value) || 0)} />
+                          <input 
+                            type="text" 
+                            value={formatNumber(project.total_amount)} 
+                            onChange={e => updateProject(project.id, 'total_amount', parseNumber(e.target.value))} 
+                          />
                         </div>
                         <textarea 
                           className="project-notes"
