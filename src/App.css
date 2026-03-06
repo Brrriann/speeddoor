@@ -332,24 +332,23 @@
   grid-column: 1 / -1;
 }
 
-.btn-excel-export {
-  width: 100%;
-  padding: 10px;
+.btn-excel-export-list {
+  padding: 10px 20px;
   background: #10b981;
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
-.btn-excel-export:hover {
+.btn-excel-export-list:hover {
   background: #059669;
   transform: translateY(-1px);
 }

@@ -196,33 +196,32 @@ function App() {
     else fetchProjects();
   };
 
-  const exportProjectToExcel = (project: Project) => {
-    const data = [
-      ["프로젝트 정보"],
-      ["현장명", project.site_name],
-      ["고객사", project.customer_name],
-      ["계약금액", project.total_amount],
-      [""],
-      ["계산서 정보"],
-      ["상호", project.biz_name],
-      ["성명", project.biz_owner],
-      ["사업장주소", project.biz_address],
-      ["업태", project.biz_type],
-      ["종목", project.biz_item],
-      ["이메일", project.biz_email],
-      [""],
-      ["공정 상태"],
-      ["실측", `${project.measure_status} (${project.measure_date || '-'})`],
-      ["설치", `${project.install_status} (${project.install_date || '-'})`],
-      ["계산서", `${project.invoice_status} (${project.invoice_date || '-'})`],
-      ["수금", `${project.payment_status} (${project.payment_date || '-'})`]
-    ];
+  const exportFilteredProjectsToExcel = (filteredProjects: Project[]) => {
+    if (filteredProjects.length === 0) {
+      alert("출력할 데이터가 없습니다.");
+      return;
+    }
 
-    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const header = ["현장명", "고객사", "계약금액", "계산서상태", "발행(예정)일", "상호", "성명", "이메일", "업태", "종목", "사업장주소"];
+    const rows = filteredProjects.map(p => [
+      p.site_name,
+      p.customer_name,
+      p.total_amount,
+      p.invoice_status,
+      p.invoice_date || "-",
+      p.biz_name || "-",
+      p.biz_owner || "-",
+      p.biz_email || "-",
+      p.biz_type || "-",
+      p.biz_item || "-",
+      p.biz_address || "-"
+    ]);
+
+    const worksheet = XLSX.utils.aoa_to_sheet([header, ...rows]);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "계산서 정보");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "계산서 발행 리스트");
     
-    XLSX.writeFile(workbook, `계산서_${project.site_name}_${new Date().toISOString().split('T')[0]}.xlsx`);
+    XLSX.writeFile(workbook, `계산서발행현황_${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
   const updateProject = async (id: string, field: string, value: any) => {
@@ -591,16 +590,12 @@ function App() {
                           <input placeholder="업태" value={project.biz_type || ''} onChange={e => updateProject(project.id, 'biz_type', e.target.value)} />
                           <input placeholder="종목" value={project.biz_item || ''} onChange={e => updateProject(project.id, 'biz_item', e.target.value)} />
                           <input placeholder="사업장주소" className="full-width" value={project.biz_address || ''} onChange={e => updateProject(project.id, 'biz_address', e.target.value)} />
-                        </div>
-                        <button className="btn-excel-export" onClick={() => exportProjectToExcel(project)}>
-                          <span className="icon">📊</span> 엑셀 다운로드 (계산서 정보)
-                        </button>
                       </div>
-                      </div>
-                      </div>
-                      ))}
-
-              </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
             ) : dashboardMode === 'calendar' ? (
               <div className="calendar-card">
                 <div className="calendar-header">
@@ -646,6 +641,12 @@ function App() {
                   <div className="invoice-summary">
                     미발급 합계: <span className="highlight">₩{projects.filter(p => p.invoice_status !== '발행완료').reduce((sum, p) => sum + (p.total_amount || 0), 0).toLocaleString()}</span>
                   </div>
+                  <button 
+                    className="btn-excel-export-list" 
+                    onClick={() => exportFilteredProjectsToExcel(projects.filter(p => invoiceFilter === '전체' ? true : p.invoice_status === invoiceFilter))}
+                  >
+                    📊 선택된 리스트 엑셀 다운로드
+                  </button>
                 </div>
 
                 <div className="invoice-list-table">
