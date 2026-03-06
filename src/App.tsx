@@ -35,7 +35,7 @@ function App() {
 
   const [quoteNumber, setQuoteNumber] = useState(`SD-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-01`);
   const [greeting, setGreeting] = useState('평소 베풀어 주신 각별한 성원에 감사드리며,\n아래와 같이 견적을 제출하오니 검토 부탁드립니다.');
-  const [remarks, setRemarks] = useState('※ 납기일: 발주 후 7일 이내\n※ 결제조건: 선금 50%, 잔금 설치 후 즉시\n※ 부가세 포함 금액입니다.');
+  const [remarks, setRemarks] = useState('※ 납기일: 발주 후 30일 이내\n※ 결제조건: 선금 50%, 잔금 설치 후 즉시\n※ 부가세 포함 금액입니다.');
 
   const addItem = (type: 'door' | 'option') => {
     const newItem: Item = {
@@ -322,15 +322,20 @@ function App() {
             <h3>해피게이트 문번 강점</h3>
             <div className="header-line" />
           </div>
-          <ul className="strengths-list">
-            <li><span className="bullet">01</span><p>1980년 아시아 최초로 개발된 스피드도어 전문 기업으로 업계를 선도하고 있는 기업입니다.</p></li>
-            <li><span className="bullet">02</span><p>전국 A/S 망 구축으로 문제 발생시 빠른 처리가 가능합니다.</p></li>
-            <li><span className="bullet">03</span><p>차 후 A/S 발생시 합리적인 수리비청구로 유지관리비용이 저렴합니다.</p></li>
-            <li><span className="bullet">04</span><p>BLDC모터 사용으로 설치시 타사 대비 월등히 작은 크기로 공간활용성증대, 전력소비절감, 저소음 개폐가 가능합니다.</p></li>
-            <li><span className="bullet">05</span><p>합리적인 이전 설치 비용으로 공장 리모델링 시에도 부담없이 이동이 가능합니다.</p></li>
-            <li><span className="bullet">06</span><p>고장력강 파이프를 사용하여 충격에도 쉽게 변형되지 않고, 강풍에도 견고하게 버틸 수 있습니다.</p></li>
-            <li><span className="bullet">07</span><p>재난 주관 방송사인 KBS에 재난 발생 피해를 막기 위해 설치하는 비상탈출문으로 보도된 제품을 보유하고 있습니다.</p></li>
-          </ul>
+          <div className="strengths-content">
+            <ul className="strengths-list">
+              <li><span className="bullet">01</span><p>1980년 아시아 최초로 개발된 스피드도어 전문 기업으로 업계를 선도하고 있는 기업입니다.</p></li>
+              <li><span className="bullet">02</span><p>전국 A/S 망 구축으로 문제 발생시 빠른 처리가 가능합니다.</p></li>
+              <li><span className="bullet">03</span><p>차 후 A/S 발생시 합리적인 수리비청구로 유지관리비용이 저렴합니다.</p></li>
+              <li><span className="bullet">04</span><p>BLDC모터 사용으로 설치시 타사 대비 월등히 작은 크기로 공간활용성증대, 전력소비절감, 저소음 개폐가 가능합니다.</p></li>
+              <li><span className="bullet">05</span><p>합리적인 이전 설치 비용으로 공장 리모델링 시에도 부담없이 이동이 가능합니다.</p></li>
+              <li><span className="bullet">06</span><p>고장력강 파이프를 사용하여 충격에도 쉽게 변형되지 않고, 강풍에도 견고하게 버틸 수 있습니다.</p></li>
+              <li><span className="bullet">07</span><p>재난 주관 방송사인 KBS에 재난 발생 피해를 막기 위해 설치하는 비상탈출문으로 보도된 제품을 보유하고 있습니다.</p></li>
+            </ul>
+            <div className="strengths-image">
+              <img src="/image.webp" alt="Happy Gate Strength" />
+            </div>
+          </div>
           <div className="strengths-footer"><p>{provider.name}</p></div>
         </div>
       </div>
