@@ -35,10 +35,19 @@
   width: 100%;
 }
 
+@media (min-width: 1024px) {
+  .main-layout {
+    flex-direction: row;
+  }
+  .quotation-card { 
+    flex: 1; 
+    min-width: 0; /* flex-basis와 함께 작동하도록 */
+  }
+}
+
 /* 대시보드 레이아웃 */
 .dashboard-container {
   width: 100%;
-  max-width: 1200px;
 }
 
 .dashboard-header {
@@ -46,9 +55,129 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.dashboard-header h1 { margin: 0; text-align: left; }
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.dashboard-tabs {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.dashboard-tabs button {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.dashboard-tabs button.active {
+  background: white;
+  color: #3b82f6;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* 캘린더 스타일 */
+.calendar-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  overflow-x: auto;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.calendar-header h2 { margin: 0; font-size: 1.5rem; color: #1e293b; white-space: nowrap; }
+.calendar-header button {
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: #e2e8f0;
+  border: 1px solid #e2e8f0;
+  min-width: 700px;
+}
+
+.calendar-day-label {
+  background: #f8fafc;
+  padding: 10px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.calendar-day {
+  background: white;
+  min-height: 100px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.calendar-day.empty { background: #fcfcfd; }
+.day-number { font-size: 12px; font-weight: 700; color: #94a3b8; }
+
+.day-events {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.calendar-event-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 2px;
+}
+
+.event {
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 700;
+}
+
+.event.measure { background: #dbeafe; color: #1e40af; }
+.event.install { background: #fef9c3; color: #854d0e; }
+.event.invoice { background: #dcfce7; color: #166534; }
+.event.payment { background: #fee2e2; color: #991b1b; }
 
 .btn-add-project {
   padding: 10px 20px;

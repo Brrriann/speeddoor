@@ -106,6 +106,8 @@ function App() {
 
   // --- 메인 앱 상태 ---
   const [view, setView] = useState<'quotation' | 'measurement' | 'dashboard'>('dashboard');
+  const [dashboardMode, setDashboardMode] = useState<'list' | 'calendar'>('list');
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [items, setItems] = useState<Item[]>([
     { id: '1', type: 'door', name: '기본형 스피드 도어', unit: 'SET', width: 3000, height: 3000, quantity: 1, unitPrice: 2500000, remarks: '' }
   ]);
@@ -417,107 +419,148 @@ function App() {
         {view === 'dashboard' ? (
           <div className="dashboard-container">
             <div className="dashboard-header">
-              <h1>공정 관리 대시보드</h1>
+              <div className="header-left">
+                <h1>공정 관리 대시보드</h1>
+                <div className="dashboard-tabs">
+                  <button className={dashboardMode === 'list' ? 'active' : ''} onClick={() => setDashboardMode('list')}>리스트 보기</button>
+                  <button className={dashboardMode === 'calendar' ? 'active' : ''} onClick={() => setDashboardMode('calendar')}>캘린더 보기</button>
+                </div>
+              </div>
               <button className="btn-add-project" onClick={addProject}>+ 새 현장 추가</button>
             </div>
 
-            <div className="project-grid">
-              {projects.length === 0 && <div className="empty-state">등록된 현장이 없습니다. '새 현장 추가'를 눌러 시작하세요.</div>}
-              {projects.map(project => (
-                <div key={project.id} className="project-card">
-                  <div className="project-card-header">
-                    <div className="project-title">
-                      <h3>{project.site_name}</h3>
-                      <input 
-                        className="customer-input" 
-                        placeholder="고객사명 입력"
-                        value={project.customer_name || ''} 
-                        onChange={e => updateProject(project.id, 'customer_name', e.target.value)} 
-                      />
+            {dashboardMode === 'list' ? (
+              <div className="project-grid">
+                {projects.length === 0 && <div className="empty-state">등록된 현장이 없습니다. '새 현장 추가'를 눌러 시작하세요.</div>}
+                {projects.map(project => (
+                  <div key={project.id} className="project-card">
+                    <div className="project-card-header">
+                      <div className="project-title">
+                        <h3>{project.site_name}</h3>
+                        <input 
+                          className="customer-input" 
+                          placeholder="고객사명 입력"
+                          value={project.customer_name || ''} 
+                          onChange={e => updateProject(project.id, 'customer_name', e.target.value)} 
+                        />
+                      </div>
+                      <button className="btn-delete-project" onClick={() => deleteProject(project.id)}>×</button>
                     </div>
-                    <button className="btn-delete-project" onClick={() => deleteProject(project.id)}>×</button>
+
+                    <div className="project-body">
+                      <div className="status-timeline">
+                        {/* 1. 실측 섹션 */}
+                        <div className={`status-node ${project.measure_status === '완료' ? 'done' : ''}`}>
+                          <div className="node-label">실측</div>
+                          <select 
+                            value={project.measure_status} 
+                            onChange={e => updateProject(project.id, 'measure_status', e.target.value)}
+                            className={`status-select ${project.measure_status}`}
+                          >
+                            <option value="대기">대기</option>
+                            <option value="진행중">진행중</option>
+                            <option value="완료">완료</option>
+                          </select>
+                          <input type="date" value={project.measure_date || ''} onChange={e => updateProject(project.id, 'measure_date', e.target.value)} />
+                        </div>
+
+                        {/* 2. 설치 섹션 */}
+                        <div className={`status-node ${project.install_status === '완료' ? 'done' : ''}`}>
+                          <div className="node-label">설치</div>
+                          <select 
+                            value={project.install_status} 
+                            onChange={e => updateProject(project.id, 'install_status', e.target.value)}
+                            className={`status-select ${project.install_status}`}
+                          >
+                            <option value="대기">대기</option>
+                            <option value="진행중">진행중</option>
+                            <option value="완료">완료</option>
+                          </select>
+                          <input type="date" value={project.install_date || ''} onChange={e => updateProject(project.id, 'install_date', e.target.value)} />
+                        </div>
+
+                        {/* 3. 계산서 섹션 */}
+                        <div className={`status-node ${project.invoice_status === '발행완료' ? 'done' : ''}`}>
+                          <div className="node-label">계산서</div>
+                          <select 
+                            value={project.invoice_status} 
+                            onChange={e => updateProject(project.id, 'invoice_status', e.target.value)}
+                            className={`status-select ${project.invoice_status === '발행완료' ? '완료' : project.invoice_status}`}
+                          >
+                            <option value="대기">대기</option>
+                            <option value="요청">요청</option>
+                            <option value="발행완료">발급완료</option>
+                          </select>
+                          <input type="date" value={project.invoice_date || ''} onChange={e => updateProject(project.id, 'invoice_date', e.target.value)} />
+                        </div>
+
+                        {/* 4. 수금 섹션 */}
+                        <div className={`status-node ${project.payment_status === '완료' ? 'done' : ''}`}>
+                          <div className="node-label">수금</div>
+                          <select 
+                            value={project.payment_status} 
+                            onChange={e => updateProject(project.id, 'payment_status', e.target.value)}
+                            className={`status-select ${project.payment_status}`}
+                          >
+                            <option value="미수금">미수금</option>
+                            <option value="일부수금">일부수금</option>
+                            <option value="완료">완료</option>
+                          </select>
+                          <input type="date" value={project.payment_date || ''} onChange={e => updateProject(project.id, 'payment_date', e.target.value)} />
+                        </div>
+                      </div>
+                      
+                      <div className="project-info-row">
+                        <div className="amount-field">
+                          <span>계약금액:</span>
+                          <input type="number" value={project.total_amount} onChange={e => updateProject(project.id, 'total_amount', parseInt(e.target.value) || 0)} />
+                        </div>
+                        <textarea 
+                          className="project-notes"
+                          placeholder="특이사항 및 메모 입력" 
+                          value={project.notes || ''} 
+                          onChange={e => updateProject(project.id, 'notes', e.target.value)}
+                          rows={1}
+                        />
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="project-body">
-                    <div className="status-timeline">
-                      {/* 1. 실측 섹션 */}
-                      <div className={`status-node ${project.measure_status === '완료' ? 'done' : ''}`}>
-                        <div className="node-label">실측</div>
-                        <select 
-                          value={project.measure_status} 
-                          onChange={e => updateProject(project.id, 'measure_status', e.target.value)}
-                          className={`status-select ${project.measure_status}`}
-                        >
-                          <option value="대기">대기</option>
-                          <option value="진행중">진행중</option>
-                          <option value="완료">완료</option>
-                        </select>
-                        <input type="date" value={project.measure_date || ''} onChange={e => updateProject(project.id, 'measure_date', e.target.value)} />
-                      </div>
-
-                      {/* 2. 설치 섹션 */}
-                      <div className={`status-node ${project.install_status === '완료' ? 'done' : ''}`}>
-                        <div className="node-label">설치</div>
-                        <select 
-                          value={project.install_status} 
-                          onChange={e => updateProject(project.id, 'install_status', e.target.value)}
-                          className={`status-select ${project.install_status}`}
-                        >
-                          <option value="대기">대기</option>
-                          <option value="진행중">진행중</option>
-                          <option value="완료">완료</option>
-                        </select>
-                        <input type="date" value={project.install_date || ''} onChange={e => updateProject(project.id, 'install_date', e.target.value)} />
-                      </div>
-
-                      {/* 3. 계산서 섹션 */}
-                      <div className={`status-node ${project.invoice_status === '발행완료' ? 'done' : ''}`}>
-                        <div className="node-label">계산서</div>
-                        <select 
-                          value={project.invoice_status} 
-                          onChange={e => updateProject(project.id, 'invoice_status', e.target.value)}
-                          className={`status-select ${project.invoice_status === '발행완료' ? '완료' : project.invoice_status}`}
-                        >
-                          <option value="대기">대기</option>
-                          <option value="요청">요청</option>
-                          <option value="발행완료">발급완료</option>
-                        </select>
-                        <input type="date" value={project.invoice_date || ''} onChange={e => updateProject(project.id, 'invoice_date', e.target.value)} />
-                      </div>
-
-                      {/* 4. 수금 섹션 */}
-                      <div className={`status-node ${project.payment_status === '완료' ? 'done' : ''}`}>
-                        <div className="node-label">수금</div>
-                        <select 
-                          value={project.payment_status} 
-                          onChange={e => updateProject(project.id, 'payment_status', e.target.value)}
-                          className={`status-select ${project.payment_status}`}
-                        >
-                          <option value="미수금">미수금</option>
-                          <option value="일부수금">일부수금</option>
-                          <option value="완료">완료</option>
-                        </select>
-                        <input type="date" value={project.payment_date || ''} onChange={e => updateProject(project.id, 'payment_date', e.target.value)} />
-                      </div>
-                    </div>
-                    
-                    <div className="project-info-row">
-                      <div className="amount-field">
-                        <span>계약금액:</span>
-                        <input type="number" value={project.total_amount} onChange={e => updateProject(project.id, 'total_amount', parseInt(e.target.value) || 0)} />
-                      </div>
-                      <textarea 
-                        className="project-notes"
-                        placeholder="특이사항 및 메모 입력" 
-                        value={project.notes || ''} 
-                        onChange={e => updateProject(project.id, 'notes', e.target.value)}
-                        rows={1}
-                      />
-                    </div>
-                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="calendar-card">
+                <div className="calendar-header">
+                  <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))}>&lt;</button>
+                  <h2>{currentMonth.getFullYear()}년 {currentMonth.getMonth() + 1}월</h2>
+                  <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))}>&gt;</button>
                 </div>
-              ))}
-            </div>
+                <div className="calendar-grid">
+                  {['일', '월', '화', '수', '목', '금', '토'].map(day => <div key={day} className="calendar-day-label">{day}</div>)}
+                  {Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay() }).map((_, i) => <div key={`empty-${i}`} className="calendar-day empty"></div>)}
+                  {Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate() }).map((_, i) => {
+                    const day = i + 1;
+                    const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const dayProjects = projects.filter(p => p.measure_date === dateStr || p.install_date === dateStr || p.invoice_date === dateStr || p.payment_date === dateStr);
+                    
+                    return (
+                      <div key={day} className="calendar-day">
+                        <span className="day-number">{day}</span>
+                        <div className="day-events">
+                          {dayProjects.map(p => (
+                            <div key={p.id} className="calendar-event-group">
+                              {p.measure_date === dateStr && <div className="event measure">실: {p.site_name}</div>}
+                              {p.install_date === dateStr && <div className="event install">설: {p.site_name}</div>}
+                              {p.invoice_date === dateStr && <div className="event invoice">계: {p.site_name}</div>}
+                              {p.payment_date === dateStr && <div className="event payment">수: {p.site_name}</div>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         ) : view === 'quotation' ? (
           <div className="quotation-card">
@@ -659,13 +702,15 @@ function App() {
           </div>
         )}
 
-        <div className="saved-list-panel">
-          {view === 'quotation' ? (
-            <><h3>견적 저장내역</h3><div className="saved-items">{savedQuotations.map(q => <div key={q.id} className="saved-item"><div className="item-info" onClick={() => loadQuotation(q)}><div className="item-name">{q.customer.name || '(무명)'}</div><div className="item-date">{new Date(q.created_at).toLocaleDateString()}</div></div><button onClick={() => deleteQuotation(q.id)} className="btn-item-delete">×</button></div>)}</div></>
-          ) : (
-            <><h3>실측 저장내역</h3><div className="saved-items">{savedMeasurements.map(m => <div key={m.id} className="saved-item"><div className="item-info" onClick={() => loadMeasurement(m)}><div className="item-name">{m.site_name || '(무명현장)'}</div><div className="item-date">{new Date(m.created_at).toLocaleDateString()}</div></div><button onClick={() => deleteMeasurement(m.id)} className="btn-item-delete">×</button></div>)}</div></>
-          )}
-        </div>
+        {view !== 'dashboard' && (
+          <div className="saved-list-panel">
+            {view === 'quotation' ? (
+              <><h3>견적 저장내역</h3><div className="saved-items">{savedQuotations.map(q => <div key={q.id} className="saved-item"><div className="item-info" onClick={() => loadQuotation(q)}><div className="item-name">{q.customer.name || '(무명)'}</div><div className="item-date">{new Date(q.created_at).toLocaleDateString()}</div></div><button onClick={() => deleteQuotation(q.id)} className="btn-item-delete">×</button></div>)}</div></>
+            ) : (
+              <><h3>실측 저장내역</h3><div className="saved-items">{savedMeasurements.map(m => <div key={m.id} className="saved-item"><div className="item-info" onClick={() => loadMeasurement(m)}><div className="item-name">{m.site_name || '(무명현장)'}</div><div className="item-date">{new Date(m.created_at).toLocaleDateString()}</div></div><button onClick={() => deleteMeasurement(m.id)} className="btn-item-delete">×</button></div>)}</div></>
+            )}
+          </div>
+        )}
       </div>
 
       {/* --- 인쇄용 프리뷰 영역 --- */}
