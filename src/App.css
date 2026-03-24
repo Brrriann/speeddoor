@@ -192,6 +192,105 @@
 
 .btn-add-project:hover { background: #2563eb; transform: translateY(-2px); }
 
+/* 홈택스 발행 설정 패널 */
+.invoice-export-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.export-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background: #f0f7ff;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #1e40af;
+  user-select: none;
+}
+.export-panel-header:hover { background: #dbeafe; }
+.panel-toggle { font-size: 0.8rem; color: #64748b; }
+.export-panel-body {
+  padding: 18px;
+  background: #fff;
+  border-top: 1px solid #e2e8f0;
+}
+.export-section-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.export-settings-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.export-supplier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.export-supplier-grid .full-col,
+.export-settings-row .full-col { grid-column: 1 / -1; }
+.export-panel-body label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  gap: 4px;
+}
+.export-panel-body label input,
+.export-panel-body label select {
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: #f8fafc;
+}
+.export-panel-body label input:focus,
+.export-panel-body label select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: #fff;
+}
+.required, em.required { color: #ef4444; font-style: normal; }
+.export-panel-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+.btn-save-settings {
+  padding: 7px 18px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.83rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-save-settings:hover { background: #1d4ed8; }
+.btn-reset-settings {
+  padding: 7px 14px;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-reset-settings:hover { background: #e2e8f0; }
+
 /* 계산서 현황 스타일 */
 .invoice-container {
   background: white;
@@ -304,11 +403,48 @@
   border-top: 1px dashed #e2e8f0;
 }
 
+.biz-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.btn-ocr {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: #2563eb;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn-ocr:hover {
+  background: #1d4ed8;
+}
+
+.btn-ocr.loading {
+  background: #93c5fd;
+  cursor: not-allowed;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 .biz-info-section .section-title {
   font-size: 0.85rem;
   font-weight: 800;
   color: #1e40af;
-  margin-bottom: 15px;
+  margin-bottom: 0;
   display: flex;
   align-items: center;
   gap: 8px;
