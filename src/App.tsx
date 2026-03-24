@@ -793,10 +793,22 @@ function App() {
                           <div className="section-title">계산서 발행 정보</div>
                           {ocrLoading[project.id] ? (
                             <span className="btn-ocr loading">📡 인식 중...</span>
-                          ) : (
+                          ) : ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? (
+                            // 모바일: 바텀시트 선택창
                             <button className="btn-ocr" onClick={() => setOcrPickerId(project.id)}>
                               📷 사업자등록증 OCR
                             </button>
+                          ) : (
+                            // PC: 바로 파일 탐색기
+                            <label className="btn-ocr">
+                              📷 사업자등록증 OCR
+                              <input type="file" accept="image/*" style={{ display: 'none' }}
+                                onChange={e => {
+                                  const file = e.target.files?.[0];
+                                  if (file) extractBizInfoFromOCR(project.id, file);
+                                  e.target.value = '';
+                                }} />
+                            </label>
                           )}
                         </div>
                         <div className="biz-info-grid">
