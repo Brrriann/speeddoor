@@ -1290,6 +1290,30 @@ input:focus, textarea:focus { outline: none; border-color: #3b82f6; background: 
   }
 }
 
+/* === 1024px 미만 공통: 견적서 카드 너비 고정 (테이블 오버플로 방지) === */
+@media (max-width: 1023px) {
+  .main-layout {
+    align-items: stretch; /* flex-start 해제 → 카드가 화면 너비에 맞게 */
+  }
+
+  .quotation-card {
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  /* items-section 내 테이블은 가로 스크롤로 처리 */
+  .items-section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .saved-list-panel {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
 /* === 태블릿 (481px ~ 767px): 갤럭시 탭, iPad Mini 등 === */
 @media (min-width: 481px) and (max-width: 767px) {
   .container {
