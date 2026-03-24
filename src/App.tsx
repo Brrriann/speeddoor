@@ -414,9 +414,19 @@ function App() {
       }
 
       setProjects(prev => prev.map(p => p.id === projectId ? { ...p, ...updates } : p));
-      const { error } = await supabase.from('projects').update(updates).eq('id', projectId);
-      if (error) console.error('OCR DB Sync Error:', error.message);
-      else alert(`✅ ${Object.keys(updates).length}개 항목을 자동으로 채웠습니다!`);
+      const { error, data: saved } = await supabase
+        .from('projects')
+        .update(updates)
+        .eq('id', projectId)
+        .select();
+      if (error) {
+        alert(`❌ DB 저장 실패: ${error.message}\n\n잠시 후 다시 시도해주세요.`);
+        console.error('OCR DB Sync Error:', error);
+      } else if (!saved || saved.length === 0) {
+        alert('❌ 저장된 데이터가 없습니다. 권한을 확인해주세요.');
+      } else {
+        alert(`✅ ${Object.keys(updates).length}개 항목이 저장되었습니다!`);
+      }
 
     } catch (err) {
       alert('OCR 처리 중 오류가 발생했습니다.');
