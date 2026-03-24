@@ -962,6 +962,384 @@ input:focus, textarea:focus { outline: none; border-color: #3b82f6; background: 
 .print-tip strong { color: #3b82f6; }
 
 /* ============================================================ */
+/*           모바일 반응형 스타일 (Mobile Responsive)              */
+/* ============================================================ */
+
+/* === 작은 모바일 (~ 480px): iPhone SE, 갤럭시 A·S 시리즈 등 === */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+  }
+
+  .container {
+    padding: 10px 8px;
+  }
+
+  /* 상단 헤더 */
+  .main-header {
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+
+  .user-info {
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .user-info button {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  /* 메인 네비게이션 - 3버튼 균등 분할 */
+  .main-nav {
+    gap: 4px;
+    padding: 0 4px;
+    margin-bottom: 10px;
+  }
+
+  .main-nav button {
+    flex: 1;
+    padding: 10px 4px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* 대시보드 헤더 - 수직 스택 */
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+
+  .header-left {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.15rem;
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  /* 탭 버튼 - 균등 분할 */
+  .dashboard-tabs {
+    width: 100%;
+  }
+
+  .dashboard-tabs button {
+    flex: 1;
+    padding: 9px 4px;
+    font-size: 12px;
+  }
+
+  /* 새 현장 추가 버튼 */
+  .btn-add-project {
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+  }
+
+  /* 프로젝트 카드 */
+  .project-card {
+    padding: 14px 12px;
+    border-left-width: 4px;
+  }
+
+  .project-card-header {
+    margin-bottom: 12px;
+  }
+
+  .project-title h3 {
+    font-size: 1.05rem;
+  }
+
+  /* 고객사 입력 - 전체 너비 */
+  .customer-input {
+    min-width: unset;
+    width: 100%;
+    max-width: 100%;
+    display: block;
+    margin-top: 6px;
+    box-sizing: border-box;
+  }
+
+  /* 상태 타임라인 - 2×2 그리드 */
+  .status-timeline {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .status-select {
+    min-height: 40px;
+    font-size: 14px;
+    padding: 6px 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .status-node input[type="date"] {
+    min-height: 38px;
+    font-size: 13px;
+    padding: 5px 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* 프로젝트 정보 행 - 수직 스택 */
+  .project-info-row {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .amount-field {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .amount-field input {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+
+  .project-notes {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* 사업자등록증 섹션 */
+  .biz-info-section {
+    margin-top: 14px;
+    padding-top: 14px;
+  }
+
+  .biz-info-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-ocr {
+    min-height: 40px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  .biz-info-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .biz-info-grid input {
+    font-size: 14px;
+    padding: 8px 10px;
+    min-height: 38px;
+  }
+
+  /* ===== 계산서 현황 ===== */
+  .invoice-container {
+    padding: 14px 12px;
+    border-radius: 12px;
+  }
+
+  /* 필터 바 - 수직 스택 */
+  .invoice-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .filter-group {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .filter-group button {
+    padding: 8px 12px;
+    font-size: 12px;
+    min-height: 38px;
+  }
+
+  .invoice-summary {
+    font-size: 13px;
+  }
+
+  /* 엑셀 다운로드 버튼 - 전체 너비 */
+  .btn-excel-export-list {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  /* 홈택스 발행 설정 패널 */
+  .export-panel-body {
+    padding: 12px;
+  }
+
+  .export-settings-row,
+  .export-supplier-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .export-panel-actions {
+    flex-direction: column;
+  }
+
+  .btn-save-settings,
+  .btn-reset-settings {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+  }
+
+  /* 계산서 테이블 가로 스크롤 */
+  .invoice-list-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .invoice-list-table table {
+    min-width: 540px;
+  }
+
+  .invoice-list-table th,
+  .invoice-list-table td {
+    padding: 10px 10px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  /* ===== 견적서 / 실측 ===== */
+  .quotation-card {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+
+  .summary-section {
+    padding: 14px;
+  }
+
+  .summary-section .total {
+    font-size: 20px;
+  }
+
+  .btn-group-main {
+    grid-template-columns: 1fr;
+  }
+
+  /* 저장 리스트 패널 */
+  .saved-list-panel {
+    padding: 16px;
+  }
+
+  /* 옵션 입력 행 */
+  .option-input-row {
+    flex-wrap: wrap;
+  }
+
+  .option-input-row select {
+    width: 100%;
+  }
+
+  /* 캘린더 */
+  .calendar-card {
+    padding: 14px 10px;
+  }
+
+  .calendar-header {
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .calendar-header h2 {
+    font-size: 1.1rem;
+  }
+}
+
+/* === 아주 작은 폰 (~ 360px): 갤럭시 A 시리즈 저가형 등 === */
+@media (max-width: 360px) {
+  .status-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .biz-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .export-settings-row,
+  .export-supplier-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-tabs button {
+    font-size: 11px;
+    padding: 8px 2px;
+  }
+
+  .filter-group button {
+    font-size: 11px;
+    padding: 7px 8px;
+  }
+}
+
+/* === 태블릿 (481px ~ 767px): 갤럭시 탭, iPad Mini 등 === */
+@media (min-width: 481px) and (max-width: 767px) {
+  .container {
+    padding: 16px 14px;
+  }
+
+  .dashboard-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header-left {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .status-timeline {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .project-info-row {
+    flex-wrap: wrap;
+  }
+
+  .customer-input {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .invoice-filter-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn-excel-export-list {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .export-settings-row,
+  .export-supplier-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================ */
 /*                      인쇄 전용 스타일 (RESTORATION)           */
 /* ============================================================ */
 .print-only { display: none; }
