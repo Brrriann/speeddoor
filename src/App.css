@@ -532,6 +532,36 @@
   transform: translateY(-1px);
 }
 
+.invoice-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.btn-template-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-template-download:hover {
+  background: #1e40af;
+  color: white;
+  border-color: #1e40af;
+}
+
 .project-card {
   background: white;
   border-radius: 16px;

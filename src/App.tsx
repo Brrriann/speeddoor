@@ -998,17 +998,26 @@ function App() {
                           미발급 합계: <span className="highlight">₩{projects.filter(p => p.invoice_status !== '완료').reduce((sum, p) => sum + (p.total_amount || 0), 0).toLocaleString()}</span>
                           {selectedCount > 0 && <span className="selected-count"> · {selectedCount}건 선택됨</span>}
                         </div>
-                        <button
-                          className="btn-excel-export-list"
-                          onClick={() => {
-                            const toExport = selectedCount > 0
-                              ? filteredProjects.filter(p => selectedInvoiceIds.has(p.id))
-                              : filteredProjects;
-                            exportFilteredProjectsToExcel(toExport);
-                          }}
-                        >
-                          📊 {selectedCount > 0 ? `선택 ${selectedCount}건 ` : ''}홈택스 엑셀 다운로드
-                        </button>
+                        <div className="invoice-btn-group">
+                          <button
+                            className="btn-excel-export-list"
+                            onClick={() => {
+                              const toExport = selectedCount > 0
+                                ? filteredProjects.filter(p => selectedInvoiceIds.has(p.id))
+                                : filteredProjects;
+                              exportFilteredProjectsToExcel(toExport);
+                            }}
+                          >
+                            📊 {selectedCount > 0 ? `선택 ${selectedCount}건 ` : ''}홈택스 엑셀 다운로드
+                          </button>
+                          <a
+                            href="/templates/세금계산서등록양식(일반).xls"
+                            download="세금계산서등록양식(일반).xls"
+                            className="btn-template-download"
+                          >
+                            📋 홈택스 등록양식 다운로드
+                          </a>
+                        </div>
                       </div>
 
                       <div className="invoice-list-table">
