@@ -962,6 +962,105 @@ input:focus, textarea:focus { outline: none; border-color: #3b82f6; background: 
 .print-tip strong { color: #3b82f6; }
 
 /* ============================================================ */
+/*             계산서 현황 - 신규 UI 요소                          */
+/* ============================================================ */
+
+/* 체크박스 열 */
+.invoice-list-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+.invoice-list-table th:first-child,
+.invoice-list-table td:first-child {
+  width: 42px;
+  text-align: center;
+  padding: 10px 6px;
+}
+
+/* 선택된 행 강조 */
+.row-selected {
+  background: #eff6ff !important;
+}
+
+/* 선택 건수 표시 */
+.selected-count {
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* 발급상태 토글 버튼 */
+.btn-invoice-toggle {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+  min-width: 76px;
+}
+
+.btn-invoice-toggle.pending {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-invoice-toggle.pending:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-invoice-toggle.done {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.btn-invoice-toggle.done:hover {
+  background: #16a34a;
+  color: white;
+}
+
+/* 거래명세서 출력 버튼 */
+.btn-print-statement {
+  padding: 5px 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  min-height: 32px;
+}
+
+.btn-print-statement:hover {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+/* 수금상태 배지 */
+.status-badge {
+  display: inline-block;
+  padding: 4px 9px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.status-badge.미수금   { background: #fee2e2; color: #991b1b; }
+.status-badge.일부수금 { background: #ffedd5; color: #9a3412; }
+.status-badge.완료     { background: #dcfce7; color: #166534; }
+
+/* ============================================================ */
 /*           모바일 반응형 스타일 (Mobile Responsive)              */
 /* ============================================================ */
 
@@ -1479,4 +1578,137 @@ input:focus, textarea:focus { outline: none; border-color: #3b82f6; background: 
   .m-photo-item img { width: 100%; display: block; height: 200px; object-fit: cover; }
   .m-footer { margin-top: 40px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; }
   .m-company { font-size: 16pt; font-weight: 900; color: #1e3a8a; margin-top: 10px; }
+
+  /* ── 거래명세서 인쇄 스타일 ── */
+  .statement-sheet {
+    width: 210mm;
+    padding: 14mm 12mm;
+    margin: 0 auto;
+    color: #1e293b;
+    box-sizing: border-box;
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+
+  .stmt-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 3px solid #0f172a;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+  }
+
+  .stmt-title {
+    font-size: 26pt;
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    margin: 0;
+    color: #0f172a;
+  }
+
+  .stmt-date {
+    font-size: 10pt;
+    color: #475569;
+  }
+
+  .stmt-parties {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .stmt-party { flex: 1; }
+
+  .stmt-party-title {
+    background: #0f172a;
+    color: white;
+    padding: 6px 10px;
+    font-size: 10.5pt;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 0.12em;
+    margin-bottom: 0;
+  }
+
+  .stmt-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #cbd5e1;
+  }
+
+  .stmt-info-table th {
+    background: #f8fafc;
+    padding: 5px 8px;
+    font-size: 9pt;
+    font-weight: 700;
+    color: #475569;
+    width: 72px;
+    border: 1px solid #cbd5e1;
+    text-align: left;
+  }
+
+  .stmt-info-table td {
+    padding: 5px 8px;
+    font-size: 9pt;
+    border: 1px solid #cbd5e1;
+    word-break: break-all;
+  }
+
+  .stmt-content-title {
+    text-align: center;
+    font-size: 11pt;
+    font-weight: 700;
+    margin: 14px 0 12px;
+    letter-spacing: 0.15em;
+    border: 1.5px solid #0f172a;
+    padding: 7px;
+  }
+
+  .stmt-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+  }
+
+  .stmt-items-table th {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    padding: 8px 5px;
+    font-size: 9.5pt;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .stmt-items-table td {
+    border: 1px solid #cbd5e1;
+    padding: 7px 5px;
+    font-size: 9.5pt;
+    min-height: 26px;
+  }
+
+  .stmt-items-table .empty-row td { height: 26px; }
+
+  .stmt-total-row { background: #f1f5f9; border-top: 2px solid #0f172a; }
+
+  .stmt-total-bar {
+    background: #0f172a;
+    color: white;
+    padding: 13px 20px;
+    font-size: 12pt;
+    font-weight: 600;
+    border-radius: 4px;
+    margin-bottom: 20px;
+  }
+
+  .stmt-total-bar strong { font-size: 13pt; }
+
+  .stmt-footer {
+    text-align: right;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 12px;
+    font-size: 12pt;
+    font-weight: 700;
+    color: #1e3a8a;
+  }
 }

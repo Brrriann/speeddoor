@@ -159,6 +159,8 @@ function App() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [ocrLoading, setOcrLoading] = useState<Record<string, boolean>>({});
   const [ocrPickerId, setOcrPickerId] = useState<string | null>(null);
+  const [selectedInvoiceIds, setSelectedInvoiceIds] = useState<Set<string>>(new Set());
+  const [printProject, setPrintProject] = useState<Project | null>(null);
   const [invoiceExportSettings, setInvoiceExportSettings] = useState<InvoiceExportSettings>(() => {
     try {
       const saved = localStorage.getItem('invoiceExportSettings');
@@ -441,6 +443,21 @@ function App() {
     if (!window.confirm('현장 데이터를 삭제하시겠습니까?')) return;
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (!error) fetchProjects();
+  };
+
+  const batchUpdateProject = async (id: string, updates: Partial<Project>) => {
+    setProjects(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+    const { error } = await supabase.from('projects').update(updates).eq('id', id);
+    if (error) console.error('DB Sync Error:', error.message);
+  };
+
+  const setInvoiceComplete = (id: string) => {
+    const today = new Date().toISOString().split('T')[0];
+    batchUpdateProject(id, { invoice_status: '완료', invoice_date: today });
+  };
+
+  const setInvoiceIncomplete = (id: string) => {
+    batchUpdateProject(id, { invoice_status: '미발급' });
   };
 
   // --- DB 로직 (견적서) ---
@@ -965,64 +982,103 @@ function App() {
                     </div>
                 </div>
 
-                <div className="invoice-filter-bar">
-                  <div className="filter-group">
-                    <button className={invoiceFilter === '전체' ? 'active' : ''} onClick={() => setInvoiceFilter('전체')}>전체 ({projects.length})</button>
-                    <button className={invoiceFilter === '미발급' ? 'active' : ''} onClick={() => setInvoiceFilter('미발급')}>미발급 ({projects.filter(p => p.invoice_status === '미발급').length})</button>
-                    <button className={invoiceFilter === '완료' ? 'active' : ''} onClick={() => setInvoiceFilter('완료')}>발급완료 ({projects.filter(p => p.invoice_status === '완료').length})</button>
-                  </div>
-                  <div className="invoice-summary">
-                    미발급 합계: <span className="highlight">₩{projects.filter(p => p.invoice_status !== '완료').reduce((sum, p) => sum + (p.total_amount || 0), 0).toLocaleString()}</span>
-                  </div>
-                  <button
-                    className="btn-excel-export-list"
-                    onClick={() => exportFilteredProjectsToExcel(projects.filter(p => invoiceFilter === '전체' ? true : p.invoice_status === invoiceFilter))}
-                  >
-                    📊 선택된 리스트 홈택스 엑셀 다운로드
-                  </button>
-                </div>
+                {(() => {
+                  const filteredProjects = projects.filter(p => invoiceFilter === '전체' ? true : p.invoice_status === invoiceFilter);
+                  const selectedCount = filteredProjects.filter(p => selectedInvoiceIds.has(p.id)).length;
+                  const allSelected = filteredProjects.length > 0 && filteredProjects.every(p => selectedInvoiceIds.has(p.id));
+                  return (
+                    <>
+                      <div className="invoice-filter-bar">
+                        <div className="filter-group">
+                          <button className={invoiceFilter === '전체' ? 'active' : ''} onClick={() => setInvoiceFilter('전체')}>전체 ({projects.length})</button>
+                          <button className={invoiceFilter === '미발급' ? 'active' : ''} onClick={() => setInvoiceFilter('미발급')}>미발급 ({projects.filter(p => p.invoice_status === '미발급').length})</button>
+                          <button className={invoiceFilter === '완료' ? 'active' : ''} onClick={() => setInvoiceFilter('완료')}>발급완료 ({projects.filter(p => p.invoice_status === '완료').length})</button>
+                        </div>
+                        <div className="invoice-summary">
+                          미발급 합계: <span className="highlight">₩{projects.filter(p => p.invoice_status !== '완료').reduce((sum, p) => sum + (p.total_amount || 0), 0).toLocaleString()}</span>
+                          {selectedCount > 0 && <span className="selected-count"> · {selectedCount}건 선택됨</span>}
+                        </div>
+                        <button
+                          className="btn-excel-export-list"
+                          onClick={() => {
+                            const toExport = selectedCount > 0
+                              ? filteredProjects.filter(p => selectedInvoiceIds.has(p.id))
+                              : filteredProjects;
+                            exportFilteredProjectsToExcel(toExport);
+                          }}
+                        >
+                          📊 {selectedCount > 0 ? `선택 ${selectedCount}건 ` : ''}홈택스 엑셀 다운로드
+                        </button>
+                      </div>
 
-                <div className="invoice-list-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>현장명</th>
-                        <th>고객사</th>
-                        <th>계약금액</th>
-                        <th>계산서 상태</th>
-                        <th>발행(예정)일</th>
-                        <th>수금상태</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {projects
-                        .filter(p => invoiceFilter === '전체' ? true : p.invoice_status === invoiceFilter)
-                        .map(p => (
-                          <tr key={p.id}>
-                            <td className="bold">{p.site_name}</td>
-                            <td>{p.customer_name}</td>
-                            <td className="right">{(p.total_amount || 0).toLocaleString()}원</td>
-                            <td>
-                              <select 
-                                value={p.invoice_status} 
-                                onChange={e => handleProjectUpdateImmediate(p.id, 'invoice_status', e.target.value)}
-                                className={`invoice-badge ${p.invoice_status === '완료' ? '완료' : p.invoice_status}`}
-                              >
-                                <option value="미발급">미발급</option>
-                                <option value="완료">발급완료</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input type="date" value={p.invoice_date || ''} onChange={e => handleProjectUpdateImmediate(p.id, 'invoice_date', e.target.value)} />
-                            </td>
-                            <td>
-                              <span className={`status-badge ${p.payment_status}`}>{p.payment_status}</span>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
+                      <div className="invoice-list-table">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>
+                                <input type="checkbox" checked={allSelected}
+                                  onChange={() => {
+                                    setSelectedInvoiceIds(prev => {
+                                      const next = new Set(prev);
+                                      if (allSelected) filteredProjects.forEach(p => next.delete(p.id));
+                                      else filteredProjects.forEach(p => next.add(p.id));
+                                      return next;
+                                    });
+                                  }}
+                                />
+                              </th>
+                              <th>현장명</th>
+                              <th>고객사</th>
+                              <th>계약금액</th>
+                              <th>계산서 상태</th>
+                              <th>발행일</th>
+                              <th>수금상태</th>
+                              <th>거래명세서</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredProjects.map(p => (
+                              <tr key={p.id} className={selectedInvoiceIds.has(p.id) ? 'row-selected' : ''}>
+                                <td>
+                                  <input type="checkbox" checked={selectedInvoiceIds.has(p.id)}
+                                    onChange={() => setSelectedInvoiceIds(prev => {
+                                      const next = new Set(prev);
+                                      if (next.has(p.id)) next.delete(p.id); else next.add(p.id);
+                                      return next;
+                                    })}
+                                  />
+                                </td>
+                                <td className="bold">{p.site_name}</td>
+                                <td>{p.customer_name}</td>
+                                <td className="right">{(p.total_amount || 0).toLocaleString()}원</td>
+                                <td>
+                                  <button
+                                    className={`btn-invoice-toggle ${p.invoice_status === '완료' ? 'done' : 'pending'}`}
+                                    onClick={() => p.invoice_status === '완료' ? setInvoiceIncomplete(p.id) : setInvoiceComplete(p.id)}
+                                  >
+                                    {p.invoice_status === '완료' ? '✓ 발급완료' : '미발급'}
+                                  </button>
+                                </td>
+                                <td>
+                                  <input type="date" value={p.invoice_date || ''} onChange={e => handleProjectUpdateImmediate(p.id, 'invoice_date', e.target.value)} />
+                                </td>
+                                <td>
+                                  <span className={`status-badge ${p.payment_status}`}>{p.payment_status}</span>
+                                </td>
+                                <td>
+                                  <button className="btn-print-statement" onClick={() => {
+                                    setPrintProject(p);
+                                    setTimeout(() => window.print(), 100);
+                                  }}>출력</button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             )}
           </div>
@@ -1261,6 +1317,105 @@ function App() {
             </ul>
             <div className="strengths-footer"><p>{provider.name}</p></div>
           </div>
+        </div>
+      )}
+
+      {printProject && (
+        <div className="print-only statement-sheet">
+          <div className="sheet-border-top" />
+          <div className="stmt-title-row">
+            <h1 className="stmt-title">거 래 명 세 서</h1>
+            <div className="stmt-date">발행일: {printProject.invoice_date || invoiceExportSettings.issueDate}</div>
+          </div>
+
+          <div className="stmt-parties">
+            <div className="stmt-party">
+              <div className="stmt-party-title">공 급 자</div>
+              <table className="stmt-info-table">
+                <tbody>
+                  <tr><th>사업자번호</th><td>{invoiceExportSettings.supplierBizNo}</td></tr>
+                  <tr><th>상호</th><td>{invoiceExportSettings.supplierName}</td></tr>
+                  <tr><th>성명</th><td>{invoiceExportSettings.supplierOwner}</td></tr>
+                  <tr><th>주소</th><td>{invoiceExportSettings.supplierAddress}</td></tr>
+                  <tr><th>업태</th><td>{invoiceExportSettings.supplierType}</td></tr>
+                  <tr><th>종목</th><td>{invoiceExportSettings.supplierItem}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="stmt-party">
+              <div className="stmt-party-title">공 급 받 는 자</div>
+              <table className="stmt-info-table">
+                <tbody>
+                  <tr><th>사업자번호</th><td>{printProject.biz_no}</td></tr>
+                  <tr><th>상호</th><td>{printProject.biz_name}</td></tr>
+                  <tr><th>성명</th><td>{printProject.biz_owner}</td></tr>
+                  <tr><th>주소</th><td>{printProject.biz_address}</td></tr>
+                  <tr><th>업태</th><td>{printProject.biz_type}</td></tr>
+                  <tr><th>종목</th><td>{printProject.biz_item}</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="stmt-content-title">아 래 와 같 이 공 급 합 니 다</div>
+
+          {(() => {
+            const total = printProject.total_amount || 0;
+            const supplyCost = invoiceExportSettings.taxType === '01' ? Math.round(total / 1.1) : total;
+            const taxAmt = invoiceExportSettings.taxType === '01' ? total - supplyCost : 0;
+            const date = printProject.invoice_date || invoiceExportSettings.issueDate;
+            const day = date ? date.split('-')[2] : '';
+            return (
+              <table className="stmt-items-table">
+                <thead>
+                  <tr>
+                    <th style={{width:'50px'}}>일자</th>
+                    <th>품목</th>
+                    <th>현장명</th>
+                    <th style={{width:'45px'}}>수량</th>
+                    <th style={{width:'110px'}}>단가</th>
+                    <th style={{width:'110px'}}>공급가액</th>
+                    <th style={{width:'90px'}}>세액</th>
+                    <th style={{width:'80px'}}>비고</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="center">{day}</td>
+                    <td>{invoiceExportSettings.itemName}</td>
+                    <td>{printProject.site_name}</td>
+                    <td className="center">1</td>
+                    <td className="right">{supplyCost.toLocaleString()}</td>
+                    <td className="right">{supplyCost.toLocaleString()}</td>
+                    <td className="right">{taxAmt.toLocaleString()}</td>
+                    <td>{printProject.notes || ''}</td>
+                  </tr>
+                  {[...Array(7)].map((_, i) => (
+                    <tr key={i} className="empty-row">
+                      <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="stmt-total-row">
+                    <td colSpan={5} className="right"><strong>합 계</strong></td>
+                    <td className="right"><strong>{supplyCost.toLocaleString()}</strong></td>
+                    <td className="right"><strong>{taxAmt.toLocaleString()}</strong></td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            );
+          })()}
+
+          <div className="stmt-total-bar">
+            합계금액 (공급가액 + 세액)&nbsp;&nbsp;
+            <strong>일금 {(printProject.total_amount || 0).toLocaleString()}원정&nbsp;&nbsp;(₩{(printProject.total_amount || 0).toLocaleString()})</strong>
+          </div>
+
+          <footer className="stmt-footer">
+            <p>{invoiceExportSettings.supplierName}</p>
+          </footer>
         </div>
       )}
 
