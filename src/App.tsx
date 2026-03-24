@@ -676,6 +676,35 @@ function App() {
       <div className="main-layout no-print">
         {view === 'dashboard' ? (
           <div className="dashboard-container">
+            {/* OCR 이미지 선택 모달 - 모든 모드에서 동작 */}
+            {ocrPickerId && (
+              <div className="ocr-picker-overlay" onClick={() => setOcrPickerId(null)}>
+                <div className="ocr-picker-sheet" onClick={e => e.stopPropagation()}>
+                  <div className="ocr-picker-title">사진 선택 방법</div>
+                  <label className="ocr-picker-option">
+                    <span>📷 카메라로 찍기</span>
+                    <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) extractBizInfoFromOCR(ocrPickerId, file);
+                        setOcrPickerId(null);
+                        e.target.value = '';
+                      }} />
+                  </label>
+                  <label className="ocr-picker-option">
+                    <span>🖼️ 사진 보관함</span>
+                    <input type="file" accept="image/jpeg,image/png,image/heic,image/heif" style={{ display: 'none' }}
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) extractBizInfoFromOCR(ocrPickerId, file);
+                        setOcrPickerId(null);
+                        e.target.value = '';
+                      }} />
+                  </label>
+                  <button className="ocr-picker-cancel" onClick={() => setOcrPickerId(null)}>취소</button>
+                </div>
+              </div>
+            )}
             <div className="dashboard-header">
               <div className="header-left">
                 <h1>공정 관리 대시보드</h1>
@@ -827,36 +856,6 @@ function App() {
               ))}
             </div>
             ) : dashboardMode === 'calendar' ? (
-              <>
-              {/* OCR 이미지 선택 모달 */}
-              {ocrPickerId && (
-                <div className="ocr-picker-overlay" onClick={() => setOcrPickerId(null)}>
-                  <div className="ocr-picker-sheet" onClick={e => e.stopPropagation()}>
-                    <div className="ocr-picker-title">사진 선택 방법</div>
-                    <label className="ocr-picker-option">
-                      <span>📷 카메라로 찍기</span>
-                      <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
-                        onChange={e => {
-                          const file = e.target.files?.[0];
-                          if (file) extractBizInfoFromOCR(ocrPickerId, file);
-                          setOcrPickerId(null);
-                          e.target.value = '';
-                        }} />
-                    </label>
-                    <label className="ocr-picker-option">
-                      <span>🖼️ 사진 보관함</span>
-                      <input type="file" accept="image/jpeg,image/png,image/heic,image/heif" style={{ display: 'none' }}
-                        onChange={e => {
-                          const file = e.target.files?.[0];
-                          if (file) extractBizInfoFromOCR(ocrPickerId, file);
-                          setOcrPickerId(null);
-                          e.target.value = '';
-                        }} />
-                    </label>
-                    <button className="ocr-picker-cancel" onClick={() => setOcrPickerId(null)}>취소</button>
-                  </div>
-                </div>
-              )}
               <div className="calendar-card">
                 <div className="calendar-header">
                   <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))}>&lt;</button>
@@ -889,7 +888,6 @@ function App() {
                   })}
                 </div>
               </div>
-              </>
             ) : (
               <div className="invoice-container">
                 {/* 공급자 정보 + 발행 설정 패널 */}
