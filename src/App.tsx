@@ -164,7 +164,6 @@ function App() {
       return saved ? { ...defaultInvoiceExportSettings, ...JSON.parse(saved) } : defaultInvoiceExportSettings;
     } catch { return defaultInvoiceExportSettings; }
   });
-  const [showSupplierPanel, setShowSupplierPanel] = useState(false);
 
   // --- 실측 템플릿 관련 상태 ---
   const [measureData, setMeasureData] = useState({
@@ -870,12 +869,7 @@ function App() {
               <div className="invoice-container">
                 {/* 공급자 정보 + 발행 설정 패널 */}
                 <div className="invoice-export-panel">
-                  <div className="export-panel-header" onClick={() => setShowSupplierPanel(v => !v)}>
-                    <span>⚙️ 홈택스 엑셀 발행 설정</span>
-                    <span className="panel-toggle">{showSupplierPanel ? '▲ 접기' : '▼ 펼치기'}</span>
-                  </div>
-                  {showSupplierPanel && (
-                    <div className="export-panel-body">
+                  <div className="export-panel-body">
                       <div className="export-section-label">📋 발행 설정</div>
                       <div className="export-settings-row">
                         <label><span>발행일자</span>
@@ -946,7 +940,6 @@ function App() {
                         }}>↺ 초기화</button>
                       </div>
                     </div>
-                  )}
                 </div>
 
                 <div className="invoice-filter-bar">
