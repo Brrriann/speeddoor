@@ -158,6 +158,7 @@ function App() {
   const [savedMeasurements, setSavedMeasurements] = useState<SavedMeasurement[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [ocrLoading, setOcrLoading] = useState<Record<string, boolean>>({});
+  const [ocrPickerId, setOcrPickerId] = useState<string | null>(null);
   const [invoiceExportSettings, setInvoiceExportSettings] = useState<InvoiceExportSettings>(() => {
     try {
       const saved = localStorage.getItem('invoiceExportSettings');
@@ -790,20 +791,13 @@ function App() {
                         <div className="biz-info-section">
                         <div className="biz-info-header">
                           <div className="section-title">계산서 발행 정보</div>
-                          <label className={`btn-ocr${ocrLoading[project.id] ? ' loading' : ''}`}>
-                            {ocrLoading[project.id] ? '📡 인식 중...' : '📷 사업자등록증 OCR'}
-                            <input
-                              type="file"
-                              accept="image/*"
-                              style={{ display: 'none' }}
-                              disabled={ocrLoading[project.id]}
-                              onChange={e => {
-                                const file = e.target.files?.[0];
-                                if (file) extractBizInfoFromOCR(project.id, file);
-                                e.target.value = '';
-                              }}
-                            />
-                          </label>
+                          {ocrLoading[project.id] ? (
+                            <span className="btn-ocr loading">📡 인식 중...</span>
+                          ) : (
+                            <button className="btn-ocr" onClick={() => setOcrPickerId(project.id)}>
+                              📷 사업자등록증 OCR
+                            </button>
+                          )}
                         </div>
                         <div className="biz-info-grid">
                           <input placeholder="사업자등록번호" value={project.biz_no || ''} onChange={e => updateProjectLocal(project.id, 'biz_no', e.target.value)} onBlur={e => syncProjectToDB(project.id, 'biz_no', e.target.value)} />
@@ -821,6 +815,36 @@ function App() {
               ))}
             </div>
             ) : dashboardMode === 'calendar' ? (
+              <>
+              {/* OCR 이미지 선택 모달 */}
+              {ocrPickerId && (
+                <div className="ocr-picker-overlay" onClick={() => setOcrPickerId(null)}>
+                  <div className="ocr-picker-sheet" onClick={e => e.stopPropagation()}>
+                    <div className="ocr-picker-title">사진 선택 방법</div>
+                    <label className="ocr-picker-option">
+                      <span>📷 카메라로 찍기</span>
+                      <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (file) extractBizInfoFromOCR(ocrPickerId, file);
+                          setOcrPickerId(null);
+                          e.target.value = '';
+                        }} />
+                    </label>
+                    <label className="ocr-picker-option">
+                      <span>🖼️ 사진 보관함</span>
+                      <input type="file" accept="image/jpeg,image/png,image/heic,image/heif" style={{ display: 'none' }}
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (file) extractBizInfoFromOCR(ocrPickerId, file);
+                          setOcrPickerId(null);
+                          e.target.value = '';
+                        }} />
+                    </label>
+                    <button className="ocr-picker-cancel" onClick={() => setOcrPickerId(null)}>취소</button>
+                  </div>
+                </div>
+              )}
               <div className="calendar-card">
                 <div className="calendar-header">
                   <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1))}>&lt;</button>
@@ -853,6 +877,7 @@ function App() {
                   })}
                 </div>
               </div>
+              </>
             ) : (
               <div className="invoice-container">
                 {/* 공급자 정보 + 발행 설정 패널 */}
