@@ -339,11 +339,8 @@ function App() {
     syncProjectToDB(id, field, value);
   };
 
-  // --- OCR: 사업자등록증 자동인식 ---
+  // --- OCR: 사업자등록증 자동인식 (Cloudflare Worker 프록시 경유 - API 키 브라우저 미노출) ---
   const extractBizInfoFromOCR = async (projectId: string, file: File) => {
-    const apiKey = import.meta.env.VITE_GOOGLE_VISION_API_KEY;
-    if (!apiKey) { alert('Google Vision API 키가 설정되지 않았습니다.'); return; }
-
     const base64 = await new Promise<string>((resolve) => {
       const reader = new FileReader();
       reader.onload = (e) => resolve((e.target?.result as string).split(',')[1]);
@@ -352,16 +349,11 @@ function App() {
 
     setOcrLoading(prev => ({ ...prev, [projectId]: true }));
     try {
-      const response = await fetch(
-        `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            requests: [{ image: { content: base64 }, features: [{ type: 'DOCUMENT_TEXT_DETECTION' }] }]
-          })
-        }
-      );
+      const response = await fetch('/api/ocr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64 }),
+      });
       const data = await response.json();
       console.log('📡 Vision API 응답:', JSON.stringify(data, null, 2));
 
