@@ -460,6 +460,20 @@ function App() {
     batchUpdateProject(id, { invoice_status: '미발급' });
   };
 
+  const markExportedAsComplete = async (exportedProjects: Project[]) => {
+    const today = new Date().toISOString().split('T')[0];
+    const pendingIds = exportedProjects
+      .filter(p => p.invoice_status === '미발급')
+      .map(p => p.id);
+    if (pendingIds.length === 0) return;
+    setProjects(prev => prev.map(p =>
+      pendingIds.includes(p.id) ? { ...p, invoice_status: '완료', invoice_date: p.invoice_date || today } : p
+    ));
+    await supabase.from('projects')
+      .update({ invoice_status: '완료', invoice_date: today })
+      .in('id', pendingIds);
+  };
+
   // --- DB 로직 (견적서) ---
   const fetchQuotations = async () => {
     const { data, error } = await supabase.from('quotations').select('*').order('created_at', { ascending: false });
@@ -1006,6 +1020,7 @@ function App() {
                                 ? filteredProjects.filter(p => selectedInvoiceIds.has(p.id))
                                 : filteredProjects;
                               exportFilteredProjectsToExcel(toExport);
+                              markExportedAsComplete(toExport);
                             }}
                           >
                             📊 {selectedCount > 0 ? `선택 ${selectedCount}건 ` : ''}홈택스 엑셀 다운로드
