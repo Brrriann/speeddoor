@@ -523,7 +523,18 @@ function App() {
 
   const deleteMeasurement = async (id: string) => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    const measurement = savedMeasurements.find(m => m.id === id);
     setSavedMeasurements(prev => prev.filter(m => m.id !== id));
+
+    // Storage 파일 삭제
+    if (measurement?.doors) {
+      const base = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/measurement-photos/`;
+      const paths: string[] = (measurement.doors as any[]).flatMap(d =>
+        (d.photos || []).filter((p: string) => p.startsWith(base)).map((p: string) => p.replace(base, ''))
+      );
+      if (paths.length > 0) await supabase.storage.from('measurement-photos').remove(paths);
+    }
+
     const { error } = await supabase.from('measurements_v2').delete().eq('id', id);
     if (error) { alert('삭제 실패: ' + error.message); fetchMeasurements(); }
   };
@@ -624,7 +635,7 @@ function App() {
     });
   };
 
-  const compressImage = (file: File, maxWidth = 1200, quality = 0.7): Promise<string> =>
+  const compressImage = (file: File, maxWidth = 1200, quality = 0.7): Promise<Blob> =>
     new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -635,22 +646,37 @@ function App() {
           canvas.width  = img.width  * scale;
           canvas.height = img.height * scale;
           canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
+          canvas.toBlob((blob) => resolve(blob!), 'image/jpeg', quality);
         };
         img.src = e.target?.result as string;
       };
       reader.readAsDataURL(file);
     });
 
+  const uploadPhotoToStorage = async (blob: Blob, doorId: string): Promise<string> => {
+    const path = `${currentUser!.id}/${doorId}_${Date.now()}.jpg`;
+    const { error } = await supabase.storage
+      .from('measurement-photos')
+      .upload(path, blob, { contentType: 'image/jpeg' });
+    if (error) throw new Error(error.message);
+    const { data } = supabase.storage.from('measurement-photos').getPublicUrl(path);
+    return data.publicUrl;
+  };
+
   const handleDoorPhotoUpload = (doorId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       Array.from(files).forEach(async (file) => {
-        const compressed = await compressImage(file);
-        setMeasureData(prev => ({
-          ...prev,
-          doors: prev.doors.map(d => d.id === doorId ? { ...d, photos: [...d.photos, compressed] } : d)
-        }));
+        try {
+          const blob = await compressImage(file);
+          const url = await uploadPhotoToStorage(blob, doorId);
+          setMeasureData(prev => ({
+            ...prev,
+            doors: prev.doors.map(d => d.id === doorId ? { ...d, photos: [...d.photos, url] } : d)
+          }));
+        } catch (err) {
+          alert('사진 업로드 실패: ' + (err as Error).message);
+        }
       });
     }
   };
