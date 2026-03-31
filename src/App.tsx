@@ -176,6 +176,7 @@ function App() {
 
   // --- 실측 자동저장 ---
   const measureDraftIdRef = useRef<string | null>(null);
+  const loadedSnapshotRef = useRef<string | null>(null); // 불러온 직후 스냅샷 (변경 감지용)
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   // --- 실측 템플릿 관련 상태 ---
@@ -219,6 +220,11 @@ function App() {
     const hasData = measureData.siteName || measureData.customerName ||
       measureData.doors.some(d => d.width || d.height || d.photos.length > 0);
     if (!hasData) return;
+
+    // 불러온 데이터와 동일하면 저장 건너뜀 (단순 검토 시 레코드 미생성)
+    const currentJson = JSON.stringify(measureData);
+    if (loadedSnapshotRef.current === currentJson) return;
+    loadedSnapshotRef.current = null; // 변경 감지됨 → 이후 스냅샷 비교 불필요
 
     setAutoSaveStatus('saving');
     const timer = setTimeout(async () => {
@@ -596,7 +602,7 @@ function App() {
 
   const loadMeasurement = (m: any) => {
     if (!window.confirm('작성 중인 내용이 사라집니다. 불러오시겠습니까?')) return;
-    measureDraftIdRef.current = null; // 새 레코드로 자동저장되도록 초기화
+    measureDraftIdRef.current = null;
     setAutoSaveStatus('idle');
     
     // 이전 데이터 포맷 호환성 처리 (extraTitle/extraDesc -> extraItems)
@@ -610,7 +616,7 @@ function App() {
       return d;
     }) || [];
 
-    setMeasureData({
+    const newData = {
       siteName: m.site_name,
       customerName: m.customer_name,
       date: m.date,
@@ -621,7 +627,9 @@ function App() {
       floorCondition: m.floor_condition,
       obstacles: m.obstacles,
       specialNotes: m.special_notes
-    });
+    };
+    loadedSnapshotRef.current = JSON.stringify(newData); // 불러온 시점 스냅샷 저장
+    setMeasureData(newData);
   };
 
   // --- 실측 템플릿 핸들러 ---
