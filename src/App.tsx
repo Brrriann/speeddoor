@@ -1406,7 +1406,7 @@ function App() {
           </header>
 
           <section className="total-bar">
-            <div className="total-label">견적 합계</div>
+            <div className="total-label">견적 합계 <span className="small">(VAT별도)</span></div>
             <div className="total-value"><span className="currency">KRW</span><span className="amount">{items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</span></div>
             <div className="issue-date">발행일: {customer.date}</div>
           </section>
