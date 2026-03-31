@@ -141,7 +141,13 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   // --- 메인 앱 상태 ---
-  const [view, setView] = useState<'quotation' | 'measurement' | 'dashboard'>('dashboard');
+  const [view, setView] = useState<'quotation' | 'measurement' | 'dashboard'>(
+    () => (localStorage.getItem('lastView') as any) || 'dashboard'
+  );
+  const changeView = (v: 'quotation' | 'measurement' | 'dashboard') => {
+    localStorage.setItem('lastView', v);
+    setView(v);
+  };
   const [dashboardMode, setDashboardMode] = useState<'list' | 'calendar' | 'invoice'>('list');
   const [invoiceFilter, setInvoiceFilter] = useState<'전체' | '미발급' | '완료'>('전체');
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -793,9 +799,9 @@ function App() {
       </header>
 
       <nav className="main-nav no-print">
-        <button className={view === 'dashboard' ? 'active' : ''} onClick={() => setView('dashboard')}>공정 대시보드</button>
-        <button className={view === 'quotation' ? 'active' : ''} onClick={() => setView('quotation')}>견적서 작성</button>
-        <button className={view === 'measurement' ? 'active' : ''} onClick={() => setView('measurement')}>실측 템플릿</button>
+        <button className={view === 'dashboard' ? 'active' : ''} onClick={() => changeView('dashboard')}>공정 대시보드</button>
+        <button className={view === 'quotation' ? 'active' : ''} onClick={() => changeView('quotation')}>견적서 작성</button>
+        <button className={view === 'measurement' ? 'active' : ''} onClick={() => changeView('measurement')}>실측 템플릿</button>
       </nav>
 
       <div className="main-layout no-print">
