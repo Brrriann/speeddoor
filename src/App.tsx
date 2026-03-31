@@ -1429,7 +1429,7 @@ function App() {
                   <td className="center">{item.unit}</td><td className="center">{item.quantity}</td><td className="right">{item.unitPrice.toLocaleString()}</td><td className="right">{(item.quantity * item.unitPrice).toLocaleString()}</td><td className="center small-text">{item.remarks}</td>
                 </tr>
               ))}
-              {[...Array(Math.max(0, 4 - items.length))].map((_, i) => (
+              {[...Array(Math.max(0, 10 - items.length))].map((_, i) => (
                 <tr key={`empty-${i}`} className="empty-row"><td className="center">{items.length + i + 1}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
               ))}
             </tbody>
