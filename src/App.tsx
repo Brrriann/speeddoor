@@ -1242,7 +1242,7 @@ function App() {
             </div>
             <div className="form-section"><h3>특이사항</h3><textarea className="remarks-input" value={remarks} onChange={e => setRemarks(e.target.value)} rows={4} /></div>
             <div className="summary-section">
-              <div className="row total">공급가액 합계: ₩{items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</div>
+              <div className="row total">합계: ₩{items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</div>
             </div>
             <div className="btn-group-main"><button onClick={saveCurrentQuotation} className="btn-save">클라우드 저장</button><button onClick={handlePrint} className="btn-print">인쇄 / PDF</button></div>
           </div>
@@ -1406,7 +1406,7 @@ function App() {
           </header>
 
           <section className="total-bar">
-            <div className="total-label">견적 공급가액 합계</div>
+            <div className="total-label">견적 합계</div>
             <div className="total-value"><span className="currency">KRW</span><span className="amount">{items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</span></div>
             <div className="issue-date">발행일: {customer.date}</div>
           </section>
@@ -1432,7 +1432,7 @@ function App() {
           <div className="sheet-footer">
             <div className="footer-left"><div className="remarks-box"><div className="label">SPECIAL NOTES / REMARKS</div><div className="remarks-content">{remarks.split('\n').map((line, i) => <p key={i}>{line}</p>)}</div></div></div>
             <div className="footer-right">
-              <div className="calc-total"><span className="c-label">공급가액 합계</span><span className="c-value">₩ {items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</span></div>
+              <div className="calc-total"><span className="c-label">합계</span><span className="c-value">₩ {items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</span></div>
             </div>
           </div>
 
