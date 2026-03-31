@@ -491,8 +491,9 @@ function App() {
 
   const deleteQuotation = async (id: string) => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    setSavedQuotations(prev => prev.filter(q => q.id !== id));
     const { error } = await supabase.from('quotations').delete().eq('id', id);
-    if (!error) fetchQuotations();
+    if (error) { alert('삭제 실패: ' + error.message); fetchQuotations(); }
   };
 
   // --- DB 로직 (실측) ---
@@ -522,8 +523,9 @@ function App() {
 
   const deleteMeasurement = async (id: string) => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    setSavedMeasurements(prev => prev.filter(m => m.id !== id));
     const { error } = await supabase.from('measurements_v2').delete().eq('id', id);
-    if (!error) fetchMeasurements();
+    if (error) { alert('삭제 실패: ' + error.message); fetchMeasurements(); }
   };
 
   const loadMeasurement = (m: any) => {
