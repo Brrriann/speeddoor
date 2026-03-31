@@ -952,10 +952,11 @@ input:focus, textarea:focus { outline: none; border-color: #3b82f6; background: 
 .autosave-status.saving { color: #64748b; }
 .autosave-status.saved { color: #10b981; font-weight: 600; }
 
-.btn-save, .btn-print { padding: 16px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; color: white; transition: all 0.2s; }
+.btn-save, .btn-print, .btn-reset-measure { padding: 16px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; color: white; transition: all 0.2s; }
 .btn-save { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
 .btn-print { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
-.btn-save:hover, .btn-print:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.btn-reset-measure { background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%); }
+.btn-save:hover, .btn-print:hover, .btn-reset-measure:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
 /* 저장 리스트 패널 (우측) */
 .saved-list-panel { 

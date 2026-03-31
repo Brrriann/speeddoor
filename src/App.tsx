@@ -1339,6 +1339,18 @@ function App() {
             <div className="btn-group-main">
               <button onClick={saveCurrentMeasurement} className="btn-save">실측 리포트 저장</button>
               <button onClick={handlePrint} className="btn-print">인쇄 / PDF</button>
+              <button onClick={() => {
+                if (!window.confirm('입력한 내용을 모두 초기화하시겠습니까?')) return;
+                measureDraftIdRef.current = null;
+                setAutoSaveStatus('idle');
+                setMeasureData({
+                  siteName: '', customerName: '',
+                  date: new Date().toISOString().split('T')[0],
+                  measurer: '',
+                  doors: [{ id: Math.random().toString(36).substr(2,9), label: '1번 도어', installation: '내측', width: '', height: '', extraItems: [{ id: Math.random().toString(36).substr(2,9), title: '', desc: '' }], photos: [] }],
+                  options: [], powerSource: '유', floorCondition: '양호(수평)', obstacles: '', specialNotes: ''
+                });
+              }} className="btn-reset-measure">초기화</button>
               {autoSaveStatus === 'saving' && <span className="autosave-status saving">저장 중...</span>}
               {autoSaveStatus === 'saved' && <span className="autosave-status saved">자동저장 완료</span>}
             </div>
