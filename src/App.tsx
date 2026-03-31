@@ -590,8 +590,8 @@ function App() {
 
   const loadMeasurement = (m: any) => {
     if (!window.confirm('작성 중인 내용이 사라집니다. 불러오시겠습니까?')) return;
-    measureDraftIdRef.current = m.id;
-    setAutoSaveStatus('saved');
+    measureDraftIdRef.current = null; // 새 레코드로 자동저장되도록 초기화
+    setAutoSaveStatus('idle');
     
     // 이전 데이터 포맷 호환성 처리 (extraTitle/extraDesc -> extraItems)
     const convertedDoors = m.doors?.map((d: any) => {
