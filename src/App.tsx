@@ -622,18 +622,33 @@ function App() {
     });
   };
 
+  const compressImage = (file: File, maxWidth = 1200, quality = 0.7): Promise<string> =>
+    new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(1, maxWidth / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width  = img.width  * scale;
+          canvas.height = img.height * scale;
+          canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+
   const handleDoorPhotoUpload = (doorId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setMeasureData(prev => ({
-            ...prev,
-            doors: prev.doors.map(d => d.id === doorId ? { ...d, photos: [...d.photos, reader.result as string] } : d)
-          }));
-        };
-        reader.readAsDataURL(file);
+      Array.from(files).forEach(async (file) => {
+        const compressed = await compressImage(file);
+        setMeasureData(prev => ({
+          ...prev,
+          doors: prev.doors.map(d => d.id === doorId ? { ...d, photos: [...d.photos, compressed] } : d)
+        }));
       });
     }
   };
