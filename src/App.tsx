@@ -152,7 +152,7 @@ function App() {
   const [customer, setCustomer] = useState(initialCustomer);
   const [quoteNumber, setQuoteNumber] = useState(`SD-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-01`);
   const [greeting, setGreeting] = useState('평소 베풀어 주신 각별한 성원에 감사드리며,\n아래와 같이 견적을 제출하오니 검토 부탁드립니다.');
-  const [remarks, setRemarks] = useState('※ 납기일: 발주 후 30일 이내\n※ 결제조건: 선금 50%, 잔금 설치 후 즉시\n※ 부가세 포함 금액입니다.');
+  const [remarks, setRemarks] = useState('※ 납기일: 발주 후 30일 이내\n※ 결제조건: 선금 50%, 잔금 설치 후 즉시\n※ 부가세 별도 금액입니다.');
   
   const [savedQuotations, setSavedQuotations] = useState<SavedQuotation[]>([]);
   const [savedMeasurements, setSavedMeasurements] = useState<SavedMeasurement[]>([]);
@@ -1241,7 +1241,11 @@ function App() {
               <button onClick={() => addItem('option')} className="btn-add">+ 추가</button>
             </div>
             <div className="form-section"><h3>특이사항</h3><textarea className="remarks-input" value={remarks} onChange={e => setRemarks(e.target.value)} rows={4} /></div>
-            <div className="summary-section"><div className="row total">합계금액: ₩{(items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0) * 1.1).toLocaleString()}</div></div>
+            <div className="summary-section">
+              <div className="row">공급가액 합계: ₩{items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</div>
+              <div className="row">부가세 (10%): ₩{(items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0) * 0.1).toLocaleString()}</div>
+              <div className="row total">합계금액: ₩{(items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0) * 1.1).toLocaleString()}</div>
+            </div>
             <div className="btn-group-main"><button onClick={saveCurrentQuotation} className="btn-save">클라우드 저장</button><button onClick={handlePrint} className="btn-print">인쇄 / PDF</button></div>
           </div>
         ) : (
@@ -1404,7 +1408,7 @@ function App() {
           </header>
 
           <section className="total-bar">
-            <div className="total-label">견적 총 합계액 <span className="small">(VAT포함)</span></div>
+            <div className="total-label">견적 총 합계액 <span className="small">(부가세 별도)</span></div>
             <div className="total-value"><span className="currency">KRW</span><span className="amount">{(items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0) * 1.1).toLocaleString()}</span></div>
             <div className="issue-date">발행일: {customer.date}</div>
           </section>
