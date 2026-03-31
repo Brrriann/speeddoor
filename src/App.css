@@ -948,6 +948,10 @@ input:focus, textarea:focus { outline: none; border-color: #3b82f6; background: 
 .btn-group-main { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 30px; }
 @media (min-width: 640px) { .btn-group-main { grid-template-columns: repeat(2, 1fr); } }
 
+.autosave-status { grid-column: 1 / -1; text-align: center; font-size: 13px; padding: 6px 0; border-radius: 8px; }
+.autosave-status.saving { color: #64748b; }
+.autosave-status.saved { color: #10b981; font-weight: 600; }
+
 .btn-save, .btn-print { padding: 16px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; color: white; transition: all 0.2s; }
 .btn-save { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
 .btn-print { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }

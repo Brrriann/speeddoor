@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from './lib/supabase';
 import './App.css';
 import React from 'react';
@@ -168,6 +168,10 @@ function App() {
     } catch { return defaultInvoiceExportSettings; }
   });
 
+  // --- 실측 자동저장 ---
+  const measureDraftIdRef = useRef<string | null>(null);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+
   // --- 실측 템플릿 관련 상태 ---
   const [measureData, setMeasureData] = useState({
     siteName: '',
@@ -202,6 +206,43 @@ function App() {
       fetchProjects();
     }
   }, [currentUser]);
+
+  // --- 실측 자동저장 (1.5초 디바운스) ---
+  useEffect(() => {
+    if (!currentUser) return;
+    const hasData = measureData.siteName || measureData.customerName ||
+      measureData.doors.some(d => d.width || d.height || d.photos.length > 0);
+    if (!hasData) return;
+
+    setAutoSaveStatus('saving');
+    const timer = setTimeout(async () => {
+      const payload = {
+        user_id: currentUser.id,
+        site_name: measureData.siteName,
+        customer_name: measureData.customerName,
+        date: measureData.date,
+        measurer: measureData.measurer,
+        doors: measureData.doors,
+        options: measureData.options,
+        power_source: measureData.powerSource,
+        floor_condition: measureData.floorCondition,
+        obstacles: measureData.obstacles,
+        special_notes: measureData.specialNotes,
+      };
+      if (measureDraftIdRef.current) {
+        await supabase.from('measurements_v2').update(payload).eq('id', measureDraftIdRef.current);
+      } else {
+        const { data, error } = await supabase.from('measurements_v2').insert([payload]).select().single();
+        if (!error && data) {
+          measureDraftIdRef.current = data.id;
+          fetchMeasurements();
+        }
+      }
+      setAutoSaveStatus('saved');
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [measureData]);
 
   // --- DB 로직 (대시보드/프로젝트) ---
   const fetchProjects = async () => {
@@ -504,7 +545,7 @@ function App() {
 
   const saveCurrentMeasurement = async () => {
     if (!currentUser) return;
-    const { error } = await supabase.from('measurements_v2').insert([{
+    const payload = {
       user_id: currentUser.id,
       site_name: measureData.siteName,
       customer_name: measureData.customerName,
@@ -515,8 +556,16 @@ function App() {
       power_source: measureData.powerSource,
       floor_condition: measureData.floorCondition,
       obstacles: measureData.obstacles,
-      special_notes: measureData.specialNotes
-    }]);
+      special_notes: measureData.specialNotes,
+    };
+    let error;
+    if (measureDraftIdRef.current) {
+      ({ error } = await supabase.from('measurements_v2').update(payload).eq('id', measureDraftIdRef.current));
+    } else {
+      const { data, error: insertError } = await supabase.from('measurements_v2').insert([payload]).select().single();
+      error = insertError;
+      if (!error && data) measureDraftIdRef.current = data.id;
+    }
     if (error) alert('저장 실패: ' + error.message);
     else { alert('실측 리포트가 저장되었습니다.'); fetchMeasurements(); }
   };
@@ -541,6 +590,8 @@ function App() {
 
   const loadMeasurement = (m: any) => {
     if (!window.confirm('작성 중인 내용이 사라집니다. 불러오시겠습니까?')) return;
+    measureDraftIdRef.current = m.id;
+    setAutoSaveStatus('saved');
     
     // 이전 데이터 포맷 호환성 처리 (extraTitle/extraDesc -> extraItems)
     const convertedDoors = m.doors?.map((d: any) => {
@@ -1285,7 +1336,12 @@ function App() {
               <textarea className="remarks-input" placeholder="추가 종합 비고" value={measureData.specialNotes} onChange={e => setMeasureData({...measureData, specialNotes: e.target.value})} rows={3} />
             </div>
 
-            <div className="btn-group-main"><button onClick={saveCurrentMeasurement} className="btn-save">실측 리포트 저장</button><button onClick={handlePrint} className="btn-print">인쇄 / PDF</button></div>
+            <div className="btn-group-main">
+              <button onClick={saveCurrentMeasurement} className="btn-save">실측 리포트 저장</button>
+              <button onClick={handlePrint} className="btn-print">인쇄 / PDF</button>
+              {autoSaveStatus === 'saving' && <span className="autosave-status saving">저장 중...</span>}
+              {autoSaveStatus === 'saved' && <span className="autosave-status saved">자동저장 완료</span>}
+            </div>
           </div>
         )}
 
