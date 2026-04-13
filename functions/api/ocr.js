@@ -59,9 +59,17 @@ export async function onRequestPost(context) {
 }
 
 export async function onRequestOptions(context) {
+  const allowedOrigins = [
+    'https://speeddoor.pages.dev',
+    'http://localhost:5173',
+    'http://localhost:5174',
+  ];
+  const origin = context.request.headers.get('Origin') || '';
+  const corsOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },

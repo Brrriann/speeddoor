@@ -385,7 +385,17 @@ function App() {
     setProjects(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
   };
 
+  const ALLOWED_PROJECT_FIELDS = new Set([
+    'site_name', 'customer_name', 'total_amount', 'notes',
+    'biz_no', 'biz_name', 'biz_owner', 'biz_email', 'biz_type', 'biz_item', 'biz_address',
+    'invoice_status', 'invoice_date', 'contract_date', 'status', 'photo_url', 'measurement_id',
+  ]);
+
   const syncProjectToDB = async (id: string, field: string, value: any) => {
+    if (!ALLOWED_PROJECT_FIELDS.has(field)) {
+      console.error('DB Sync Error: 허용되지 않은 필드:', field);
+      return;
+    }
     const { error } = await supabase.from('projects').update({ [field]: value }).eq('id', id);
     if (error) console.error('DB Sync Error:', error.message);
   };
@@ -411,7 +421,7 @@ function App() {
         body: JSON.stringify({ imageBase64: base64 }),
       });
       const data = await response.json();
-      console.log('📡 Vision API 응답:', JSON.stringify(data, null, 2));
+      if (import.meta.env.DEV) console.log('📡 Vision API 응답:', JSON.stringify(data, null, 2));
 
       // API 에러 체크
       if (data.error) {
@@ -429,7 +439,7 @@ function App() {
         data.responses?.[0]?.textAnnotations?.[0]?.description ||
         '';
 
-      console.log('📝 인식된 텍스트:', text);
+      if (import.meta.env.DEV) console.log('📝 인식된 텍스트:', text);
 
       if (!text) { alert('텍스트를 인식하지 못했습니다.\n\n브라우저 콘솔(F12)에서 API 응답을 확인해주세요.'); return; }
 
