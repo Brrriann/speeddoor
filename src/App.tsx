@@ -167,6 +167,7 @@ function App() {
   const [ocrPickerId, setOcrPickerId] = useState<string | null>(null);
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState<Set<string>>(new Set());
   const [printProject, setPrintProject] = useState<Project | null>(null);
+  const [printTitle, setPrintTitle] = useState<'견적서' | '거래명세서'>('견적서');
   const [invoiceExportSettings, setInvoiceExportSettings] = useState<InvoiceExportSettings>(() => {
     try {
       const saved = localStorage.getItem('invoiceExportSettings');
@@ -1268,7 +1269,14 @@ function App() {
             <div className="summary-section">
               <div className="row total">합계: ₩{items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</div>
             </div>
-            <div className="btn-group-main"><button onClick={saveCurrentQuotation} className="btn-save">클라우드 저장</button><button onClick={handlePrint} className="btn-print">인쇄 / PDF</button></div>
+            <div className="btn-group-main">
+              <button onClick={saveCurrentQuotation} className="btn-save">클라우드 저장</button>
+              <div className="print-title-toggle">
+                <button className={printTitle === '견적서' ? 'active' : ''} onClick={() => setPrintTitle('견적서')}>견적서</button>
+                <button className={printTitle === '거래명세서' ? 'active' : ''} onClick={() => setPrintTitle('거래명세서')}>거래명세서</button>
+              </div>
+              <button onClick={handlePrint} className="btn-print">인쇄 / PDF</button>
+            </div>
           </div>
         ) : (
           /* 실측 템플릿 작성 화면 */
@@ -1405,7 +1413,7 @@ function App() {
                 <p className="brand-tagline">{provider.brandTagline}</p>
               </div>
               <div className="doc-title-wrapper">
-                <h1 className="doc-title">견 적 서</h1>
+                <h1 className="doc-title">{printTitle === '견적서' ? '견 적 서' : '거 래 명 세 서'}</h1>
                 <div className="doc-number">{quoteNumber}</div>
               </div>
             </div>
@@ -1430,7 +1438,7 @@ function App() {
           </header>
 
           <section className="total-bar">
-            <div className="total-label">견적 합계 <span className="small">(VAT별도)</span></div>
+            <div className="total-label">{printTitle === '견적서' ? '견적' : '거래'} 합계 <span className="small">(VAT별도)</span></div>
             <div className="total-value"><span className="currency">KRW</span><span className="amount">{items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</span></div>
             <div className="issue-date">발행일: {customer.date}</div>
           </section>
