@@ -1437,11 +1437,32 @@ function App() {
             </div>
           </header>
 
-          <section className="total-bar">
-            <div className="total-label">{printTitle === '견적서' ? '견적' : '거래'} 합계 <span className="small">(VAT별도)</span></div>
-            <div className="total-value"><span className="currency">KRW</span><span className="amount">{items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</span></div>
-            <div className="issue-date">발행일: {customer.date}</div>
-          </section>
+          {(() => {
+            const supplyAmt = items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0);
+            const vatAmt = Math.round(supplyAmt * 0.1);
+            const totalAmt = supplyAmt + vatAmt;
+            return (
+              <section className="total-bar">
+                {printTitle === '견적서' ? (
+                  <>
+                    <div className="total-label">견적 합계 <span className="small">(VAT별도)</span></div>
+                    <div className="total-value"><span className="currency">KRW</span><span className="amount">{supplyAmt.toLocaleString()}</span></div>
+                  </>
+                ) : (
+                  <>
+                    <div className="total-label">합계금액</div>
+                    <div className="total-value"><span className="currency">KRW</span><span className="amount">{totalAmt.toLocaleString()}</span></div>
+                    <div className="vat-breakdown">
+                      <span>공급가액 {supplyAmt.toLocaleString()}</span>
+                      <span className="vat-sep">+</span>
+                      <span>부가세 {vatAmt.toLocaleString()}</span>
+                    </div>
+                  </>
+                )}
+                <div className="issue-date">발행일: {customer.date}</div>
+              </section>
+            );
+          })()}
 
           <table className="sheet-table">
             <thead>
@@ -1464,7 +1485,20 @@ function App() {
           <div className="sheet-footer">
             <div className="footer-left"><div className="remarks-box"><div className="label">SPECIAL NOTES / REMARKS</div><div className="remarks-content">{remarks.split('\n').map((line, i) => <p key={i}>{line}</p>)}</div></div></div>
             <div className="footer-right">
-              <div className="calc-total"><span className="c-label">합계</span><span className="c-value">₩ {items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0).toLocaleString()}</span></div>
+              {(() => {
+                const supplyAmt = items.reduce((s, i) => s + (i.quantity * i.unitPrice), 0);
+                const vatAmt = Math.round(supplyAmt * 0.1);
+                const totalAmt = supplyAmt + vatAmt;
+                return printTitle === '견적서' ? (
+                  <div className="calc-total"><span className="c-label">합계</span><span className="c-value">₩ {supplyAmt.toLocaleString()}</span></div>
+                ) : (
+                  <>
+                    <div className="calc-total"><span className="c-label">공급가액</span><span className="c-value">₩ {supplyAmt.toLocaleString()}</span></div>
+                    <div className="calc-total"><span className="c-label">부가세(10%)</span><span className="c-value">₩ {vatAmt.toLocaleString()}</span></div>
+                    <div className="calc-total calc-total-final"><span className="c-label">합계금액</span><span className="c-value">₩ {totalAmt.toLocaleString()}</span></div>
+                  </>
+                );
+              })()}
             </div>
           </div>
 
